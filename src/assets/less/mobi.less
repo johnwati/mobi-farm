@@ -1,0 +1,51 @@
+// @import "~antd/lib/style/index";
+
+.container {
+    width: 100%;
+    display: flex;
+    // align-self: center;
+    // align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.make-container(@minWidth, @breakpoint) {
+    @media (min-width: @minWidth) {
+        .container {
+            max-width: @breakpoint;
+        }
+    }
+}
+
+.make-container(@screen-xs-min, @screen-xs);
+.make-container(@screen-sm-min, @screen-sm);
+.make-container(@screen-md-min, @screen-md);
+.make-container(@screen-lg-min, @screen-lg);
+.make-container(@screen-xl-min, @screen-xl);
+.make-container(@screen-xxl-min, @screen-xxl);
+
+.full-width {
+  width: 100%;
+}
+
+.ant-table.ant-table-small .ant-table-title, .ant-table.ant-table-small .ant-table-footer, .ant-table.ant-table-small .ant-table-thead > tr > th, .ant-table.ant-table-small .ant-table-tbody > tr > td, .ant-table.ant-table-small tfoot > tr > th, .ant-table.ant-table-small tfoot > tr > td {
+  padding: 8px 12px;
+}
+
+@sidebar-active-bg: #0c8184;
+
+.sidebar {
+  .ant-menu-item:active, .ant-menu-submenu-title:active,
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: @sidebar-active-bg;
+    color: #ffffff;
+  }
+
+  .ant-menu-light .ant-menu-item:hover, .ant-menu-light .ant-menu-item-active, .ant-menu-light .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-light .ant-menu-submenu-active, .ant-menu-light .ant-menu-submenu-title:hover {
+    color: #ffffff
+  }
+
+  .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+    border-right: 1px solid @primary-color;
+  }
+}
