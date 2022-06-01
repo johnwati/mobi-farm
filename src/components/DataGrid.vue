@@ -436,7 +436,6 @@
         </a-button>
 
         <a-popconfirm
-          v-show="$route.name !== 'LoansList'"
           title="Are you sure delete?"
           ok-text="Yes"
           cancel-text="No"

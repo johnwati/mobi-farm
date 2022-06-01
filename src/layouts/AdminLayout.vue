@@ -45,7 +45,7 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header class="header" theme="light">
-        <a-space direction="row" align="center">
+        <a-space direction="horizontal" align="center">
           <a-button type="text">
             <template #icon>
               <menu-outlined
