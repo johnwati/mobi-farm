@@ -32,7 +32,7 @@ const router = createRouter({
       children: [
         {
           path: "dashboard",
-          name: "home",
+          name: "dashboard",
           component: DashboardViewVue,
         },
         {

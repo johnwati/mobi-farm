@@ -7,7 +7,7 @@
         sub-title="Sorry, the server is wrong."
       >
         <template #extra>
-          <a-button type="primary" @click="$router.push('/home')">
+          <a-button type="primary" @click="$router.push('/dashboard')">
             Back Home
           </a-button>
         </template>

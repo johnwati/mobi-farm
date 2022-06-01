@@ -12,7 +12,7 @@
       <div class="logo"></div>
       <a-menu v-model:selectedKeys="selectedKeys" mode="inline">
         <a-typography-link href="/dashboard">
-          <a-menu-item key="home">
+          <a-menu-item key="dashboard">
             <area-chart-outlined />
             <span>Dashboard</span>
           </a-menu-item>

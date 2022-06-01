@@ -7,7 +7,7 @@
         sub-title="Sorry, you are not authorized to access this page."
       >
         <template #extra>
-          <a-button type="primary" @click="$router.push('/home')">
+          <a-button type="primary" @click="$router.push('/dashboard')">
             Back Home
           </a-button>
         </template>
