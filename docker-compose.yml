@@ -1,0 +1,44 @@
+version: '3'
+services:
+  mobifarm-ussd-php:
+    hostname:  "${MOBIFARM_WEB_SERVICE}"
+    container_name: "${MOBIFARM_WEB_SERVICE}"
+    build:
+      # context: /
+      dockerfile:  Dockerfile
+    image: "${MOBIFARM_WEB_SERVICE}"
+    volumes:
+    # #   ## copy project files to /var/www ##
+      # - ./build/:/var/www/public
+      - ./conf/nginx-site.conf:/etc/nginx/sites-available/default.conf
+    working_dir: /var/www
+    ports:
+      - "3000:80" 
+  # mobifarm-auth-service:
+  #   hostname: "${MOBIFARM_AUTH_SERVICE}"
+  #   container_name: "${MOBIFARM_AUTH_SERVICE}"
+  #   build:
+  #     context: /mobifarm-auth-service/
+  #     dockerfile:  Dockerfile
+  #   image: "${MOBIFARM_AUTH_SERVICE}"
+  #   # volumes:
+  #   # #   ## copy project files to /var/www ##
+  #     # - ./build/:/var/www/public
+  #     # - ./mobifarm-ussd-service/conf/nginx-site.conf:/etc/nginx/sites-available/default.conf
+  #   # working_dir: /var/www
+  #   ports:
+  #     - "8010:8010"
+  # mobifarm-core-service:
+  #   hostname: "${MOBIFARM_CORE_SERVICE}"
+  #   container_name: "${MOBIFARM_CORE_SERVICE}"
+  #   build:
+  #     context: /mobifarm-core-service/
+  #     dockerfile:  Dockerfile
+  #   image: "${MOBIFARM_CORE_SERVICE}"
+  #   # volumes:
+  #   # #   ## copy project files to /var/www ##
+  #     # - ./build/:/var/www/public
+  #     # - ./mobifarm-ussd-service/conf/nginx-site.conf:/etc/nginx/sites-available/default.conf
+  #   # working_dir: /var/www
+  #   ports:
+  #     - "8011:8011"
