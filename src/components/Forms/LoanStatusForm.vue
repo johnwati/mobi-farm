@@ -38,7 +38,6 @@
             v-for="(item, ind) in loanStatusList"
             :value="item.name"
             :key="ind"
-            @click="visiblePopConfirm = true"
           >
             {{ item.name }}
           </a-select-option>

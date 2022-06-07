@@ -16,14 +16,14 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button type="primary" @click="visible = true">
+            <a-button type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>
 
               Add Limit
             </a-button>
-            <a-button type="primary" @click="visible = true">
+            <a-button type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -49,7 +49,7 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="visible = true">
+            <a-button key="1" type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -75,7 +75,7 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="visible = true">
+            <a-button key="1" type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -94,7 +94,7 @@
       <a-tab-pane key="4" tab="Items">
         <a-page-header title="Items" :ghost="false" class="list-page-header">
           <template #extra>
-            <a-button key="1" type="primary" @click="visible = true">
+            <a-button key="1" type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -117,7 +117,7 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="visible = true">
+            <a-button key="1" type="primary" @click="formVisible = true">
               <template #icon>
                 <PlusOutlined />
               </template>

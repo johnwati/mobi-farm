@@ -1,4 +1,4 @@
-// import { computed, ComputedRef } from "vue";
+import type { ComputedRef } from "vue";
 import { computed } from "vue";
 // import { useStore } from "vuex";
 // import { useRouter } from "vue-router";
@@ -10,11 +10,18 @@ import { useEnumStore } from "@/stores/enums";
 
 export default function useLoans(): {
   // loan: Record<string, unknown>;
-  loan: ILoan;
-  farmerLoans: [];
-  loanCount: number;
-  loanStatusList: [];
-  fetchFarmers: () => Promise<void>;
+  loan: ComputedRef<Record<string, string>>;
+  loans: ComputedRef<Record<string, unknown>[]>;
+  // loan: ComputedRef<object>;
+  // loans: ComputedRef<object[]>;
+  // loan: ComputedRef<Record<ILoan, unknown>>;
+  // loans: ComputedRef<Record<ILoan, unknown>[]>;
+  // loan: ComputedRef<ILoan>;
+  // loans: ComputedRef<ILoan[]>;
+  farmerLoans: Record<string, unknown>[];
+  loanCount: ComputedRef<number>;
+  loanStatusList: ComputedRef<Record<string, unknown>[]>;
+  fetchLoans: (payload) => Promise<void>;
   updateLoanStatus: (payload) => Promise<void>;
   setLoan: (payload) => Promise<void>;
   // farmerId: ComputedRef<number>;
@@ -209,9 +216,9 @@ export default function useLoans(): {
     }
   }
 
-  async function fetchLoans(): Promise<void> {
+  async function fetchLoans(payload): Promise<void> {
     try {
-      await store.fetchLoans();
+      await store.fetchLoans(payload);
     } catch (error) {
       console.error(error);
     }

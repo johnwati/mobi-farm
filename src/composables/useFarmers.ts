@@ -1,4 +1,5 @@
-// import { computed, ComputedRef } from "vue";
+/* eslint-disable @typescript-eslint/ban-types */
+import type { ComputedRef } from "vue";
 import { computed } from "vue";
 // import { useStore } from "vuex";
 // import { useRouter } from "vue-router";
@@ -11,14 +12,16 @@ import type {
 } from "@/interfaces/farmers";
 
 export default function useFarmers(): {
-  farmers: IFarmer[];
-  farmer: IFarmer;
-  farmerCount: number;
-  farmerAccountBalance: number;
-  farmerDeposits: [];
-  farmerDepositCount: number;
-  farmerLoanPayments: [];
-  farmerPaymentsCount: number;
+  farmers: ComputedRef<IFarmerDGResponse[]>;
+  farmer: ComputedRef<IFarmerDGResponse>;
+  // farmers: ComputedRef<Record<string, unknown>[]>;
+  // farmer: ComputedRef<Record<string, unknown>>;
+  farmerCount: ComputedRef<number>;
+  farmerAccountBalance: ComputedRef<number>;
+  farmerDeposits: ComputedRef<Record<string, unknown>[]>;
+  farmerDepositCount: ComputedRef<number>;
+  farmerLoanPayments: ComputedRef<Record<string, unknown>[]>;
+  farmerPaymentsCount: ComputedRef<number>;
   fetchFarmers: () => Promise<void>;
   fetchFarmer: (id: number) => Promise<void>;
   updateFarmer: (payload: IFarmer) => Promise<void>;

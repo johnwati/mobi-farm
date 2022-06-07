@@ -1,4 +1,3 @@
-import DashboardViewVue from "@/views/DashboardView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -33,7 +32,7 @@ const router = createRouter({
         {
           path: "dashboard",
           name: "dashboard",
-          component: DashboardViewVue,
+          component: () => import("../views/DashboardView.vue"),
         },
         {
           path: "farmers",

@@ -366,7 +366,8 @@
     </template>
 
     <template #document="{ text: document }">
-      <a-typography-link v-if="document" :href="`${apiBaseUrl}${document.url}`">
+      <a-typography-link v-if="document">
+        <!-- :href="`${apiBaseUrl}${document.url}`" -->
         {{ document.name }}
       </a-typography-link>
     </template>
@@ -415,7 +416,7 @@
           >
             <a-spin :spinning="messageLoading">
               <a-form-item>
-                <a-textarea v-model:value="messageRequest.message" :rows="4" />
+                <!-- <a-textarea v-model:value="messageRequest.message" :rows="4" /> -->
               </a-form-item>
 
               <a-form-item>
@@ -604,13 +605,14 @@ export default defineComponent({
     //   phones: [],
     // });
 
-    const openMessageDrawer = () =>
+    const openMessageDrawer = (record) =>
       // record:
       // | IGuardianResponse
       // | IDutyRosterResponse
       // | ITeamResponse
       // | IStudentResponse
       {
+        console.log(record)
         // editRecord.value = record;
         visible.value = true;
       };

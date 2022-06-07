@@ -19,26 +19,27 @@ export interface IFarmer {
   phone_number: string;
   full_names: string;
   farmer_id: string;
-  payment_method: "MPESA" | "CASH" | "BANK";
+  payment_method: string;
+  // payment_method: "MPESA" | "CASH" | "BANK";
   account_number: string;
   account_name: string;
-  status:
-    | "PENDING_REGISTRATION"
-    | "REGISTERED"
-    | "ACTIVE"
-    | "PENDING"
-    | "DEACTIVATED"
-    | "DORMANT";
+  status: string;
+  // | "PENDING_REGISTRATION"
+  // | "REGISTERED"
+  // | "ACTIVE"
+  // | "PENDING"
+  // | "DEACTIVATED"
+  // | "DORMANT";
   new: boolean;
 }
 
 // columns added
 export interface IFarmerDGResponse extends IFarmer {
-  activation_stage?:
-    | "PENDING_REGISTRATION"
-    | "SELF_REGISTRATION"
-    | "BRANCH_ACCOUNT"
-    | "CONVETIONAL_ACCOUNT";
+  activation_stage: string;
+  // | "PENDING_REGISTRATION"
+  // | "SELF_REGISTRATION"
+  // | "BRANCH_ACCOUNT"
+  // | "CONVETIONAL_ACCOUNT";
   deposit_limit?: number;
   loan_limit?: number;
   email_validation?: number;

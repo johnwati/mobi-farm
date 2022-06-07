@@ -1134,7 +1134,7 @@ export const useFarmersStore = defineStore({
       }
     },
 
-    async setFarmer(farmerItem: IFarmerDGResponse) {
+    async setFarmer(farmerItem) {
       try {
         console.log("setting farmer", farmerItem.id);
         this.farmer = farmerItem;

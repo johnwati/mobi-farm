@@ -1,4 +1,4 @@
-// import { computed, ComputedRef } from "vue";
+import type { ComputedRef } from "vue";
 import { computed } from "vue";
 // import { useStore } from "vuex";
 // import { useRouter } from "vue-router";
@@ -9,8 +9,8 @@ import { useLoansStore } from "@/stores/loans";
 import { useEnumStore } from "@/stores/enums";
 
 export default function useAdmin(): {
-  farmerLimits: [];
-  farmerLimitsCount: number;
+  farmerLimits: Record<string, unknown>[];
+  farmerLimitsCount: ComputedRef<number>;
 } {
   const store = useLoansStore();
   const enumStore = useEnumStore();

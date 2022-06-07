@@ -6,7 +6,8 @@
     "allowJs": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "strict": false,
   },
 
   "references": [

@@ -79,12 +79,12 @@ export default defineComponent({
         await currencyForm.value.validate();
 
         if (props.isEditing) {
-          await updateCurrency({
-            code: loan.code,
-            data: formState.value,
-          });
+          // await updateCurrency({
+          //   code: loan.code,
+          //   data: formState.value,
+          // });
         } else {
-          await createCurrency(formState.value);
+          // await createCurrency(formState.value);
         }
         currencyForm.value.resetFields();
       } catch (error) {
@@ -122,13 +122,13 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            formState.value = {
-              code: currency.value.code,
-              symbol: currency.value.symbol,
-              name: currency.value.name,
-              decimalPlaces: currency.value.decimalPlaces,
-              format: currency.value.format,
-            };
+            // formState.value = {
+            // code: currency.value.code,
+            // symbol: currency.value.symbol,
+            // name: currency.value.name,
+            // decimalPlaces: currency.value.decimalPlaces,
+            // format: currency.value.format,
+            // };
           }
         } catch (error) {
           console.error(error);
@@ -140,7 +140,7 @@ export default defineComponent({
     );
 
     return {
-      currency,
+      // currency,
       currencyForm,
       rules,
       formState,
