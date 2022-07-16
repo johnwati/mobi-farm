@@ -1,44 +1,42 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import type { ComputedRef } from "vue";
 import { computed } from "vue";
-// import { useStore } from "vuex";
-// import { useRouter } from "vue-router";
 import { useFarmersStore } from "@/stores/farmers";
 
-import type {
-  IFarmer,
-  IFarmerDGResponse,
-  IFarmerRegistration,
-} from "@/interfaces/farmers";
+import type { IFarmerDGResponse } from "@/interfaces/farmers";
 
 export default function useFarmers(): {
-  farmers: ComputedRef<IFarmerDGResponse[]>;
-  farmer: ComputedRef<IFarmerDGResponse>;
-  // farmers: ComputedRef<Record<string, unknown>[]>;
-  // farmer: ComputedRef<Record<string, unknown>>;
+  farmers: ComputedRef;
+  farmer: ComputedRef;
   farmerCount: ComputedRef<number>;
   farmerAccountBalance: ComputedRef<number>;
   farmerDeposits: ComputedRef<Record<string, unknown>[]>;
   farmerDepositCount: ComputedRef<number>;
   farmerLoanPayments: ComputedRef<Record<string, unknown>[]>;
   farmerPaymentsCount: ComputedRef<number>;
+  farmerLoans: ComputedRef<Record<string, unknown>[]>;
+  farmerLoansCount: ComputedRef<number>;
   fetchFarmers: () => Promise<void>;
-  fetchFarmer: (id: number) => Promise<void>;
-  updateFarmer: (payload: IFarmer) => Promise<void>;
-  createFarmer: (payload: IFarmerRegistration) => Promise<void>;
-  setFarmer: (payload: IFarmerDGResponse) => Promise<void>;
+  fetchFarmer: (id: number) => Promise<string>;
+  fetchFarmerLoans: (code: string) => Promise<void>;
+  fetchLoanPayments: (id: number) => Promise<void>;
+  fetchDeposits: (id: number) => Promise<void>;
+  updateFarmer: (payload: Record<string, unknown>) => Promise<void>;
+  createFarmer: (payload) => Promise<void>;
+  setFarmer: (payload) => Promise<void>;
   deleteFarmer: (payload: number) => Promise<void>;
-  // farmerId: ComputedRef<number>;
 } {
   const store = useFarmersStore();
-
-  // const router = useRouter();
 
   const farmers = computed(() => store.getFarmers);
 
   const farmer = computed(() => store.getFarmer);
 
   const farmerCount = computed(() => store.getFarmerCount);
+
+  const farmerLoans = computed(() => store.getFarmerLoans);
+
+  const farmerLoansCount = computed(() => store.getFarmerLoansCount);
 
   const farmerAccountBalance = computed(() => store.getFarmerAccountBalance);
 
@@ -66,15 +64,39 @@ export default function useFarmers(): {
     }
   }
 
-  async function fetchFarmer(id: number): Promise<void> {
+  async function fetchDeposits(payload): Promise<void> {
     try {
-      await store.fetchFarmer(id);
+      await store.fetchFarmerDeposits(payload);
     } catch (error) {
       console.error(error);
     }
   }
 
-  async function updateFarmer(payload: IFarmer): Promise<void> {
+  async function fetchLoanPayments(payload): Promise<void> {
+    try {
+      await store.fetchFarmerLoanPayments(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchFarmerLoans(code: string): Promise<void> {
+    try {
+      await store.fetchFarmerLoans(code);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchFarmer(id: number): Promise<string> {
+    try {
+      return await store.fetchFarmer(id);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateFarmer(payload): Promise<void> {
     try {
       await store.updateFarmer(payload);
     } catch (error) {
@@ -82,7 +104,7 @@ export default function useFarmers(): {
     }
   }
 
-  async function createFarmer(payload: IFarmerRegistration): Promise<void> {
+  async function createFarmer(payload): Promise<void> {
     try {
       await store.registerFarmer(payload);
     } catch (error) {
@@ -107,11 +129,16 @@ export default function useFarmers(): {
     farmerAccountBalance,
     farmerLoanPayments,
     farmerPaymentsCount,
+    farmerLoans,
+    farmerLoansCount,
     setFarmer,
     fetchFarmers,
     fetchFarmer,
     updateFarmer,
     createFarmer,
     deleteFarmer,
+    fetchDeposits,
+    fetchLoanPayments,
+    fetchFarmerLoans,
   };
 }

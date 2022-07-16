@@ -3,175 +3,310 @@ import { computed } from "vue";
 // import { useStore } from "vuex";
 // import { useRouter } from "vue-router";
 
-import type { IFarmer } from "@/interfaces/farmers";
-import type { ILoan } from "@/interfaces/loans";
-import { useLoansStore } from "@/stores/loans";
-import { useEnumStore } from "@/stores/enums";
+import { useSettingsStore } from "@/stores/settings";
+import { useFarmerLimitsStore } from "@/stores/farmersLimits";
+import { useLoanProductStore } from "@/stores/loanProduct";
 
 export default function useAdmin(): {
-  farmerLimits: Record<string, unknown>[];
+  loanProduct: ComputedRef<Record<string, unknown>>;
+  loanProducts: ComputedRef<Record<string, unknown>[]>;
+  loanProductsCount: ComputedRef<number>;
+  farmerLimit: ComputedRef;
+  farmerLimits: ComputedRef<Record<string, unknown>[]>;
   farmerLimitsCount: ComputedRef<number>;
+  agroDealer: ComputedRef<Record<string, unknown>>;
+  agroDealers: ComputedRef<Record<string, unknown>[]>;
+  agroDealersCount: ComputedRef<number>;
+  currency: ComputedRef;
+  currencies: ComputedRef<Record<string, unknown>[]>;
+  currenciesCount: ComputedRef<number>;
+  item: ComputedRef<Record<string, unknown>>;
+  items: ComputedRef<Record<string, unknown>[]>;
+  itemsCount: ComputedRef<number>;
+  createFarmerLimit: (payload) => Promise<void>;
+  createCurrency: (payload) => Promise<void>;
+  createLoanProduct: (payload) => Promise<void>;
+  createAgroDealer: (payload) => Promise<void>;
+  createItem: (payload) => Promise<void>;
+  fetchFarmerLimits: () => Promise<void>;
+  fetchLoanProducts: () => Promise<void>;
+  fetchAgroDealers: () => Promise<void>;
+  fetchAgroDealer: (id: number) => Promise<void>;
+  fetchItems: () => Promise<void>;
+  // fetchItem: () => Promise<void>;
+  fetchCurrencies: () => Promise<void>;
+  setFarmerLimit: (payload) => Promise<void>;
+  setLoanProduct: (payload) => Promise<void>;
+  setAgroDealer: (payload) => Promise<void>;
+  setItem: (payload) => Promise<void>;
+  setCurrency: (payload) => Promise<void>;
+  updateFarmerLimits: (payload) => Promise<void>;
+  updateLoanProduct: (payload) => Promise<void>;
+  updateAgroDealer: (payload) => Promise<void>;
+  updateItem: (payload) => Promise<void>;
+  updateCurrency: (payload) => Promise<void>;
+  deleteFarmerLimits: (payload) => Promise<void>;
+  // deleteLoanProduct: (payload) => Promise<void>;
+  // deleteAgroDealer: (payload) => Promise<void>;
+  // deleteItem: (payload) => Promise<void>;
+  // deleteCurrency: (payload) => Promise<void>;
 } {
-  const store = useLoansStore();
-  const enumStore = useEnumStore();
+  const store = useSettingsStore();
+  const limitStore = useFarmerLimitsStore();
+  const loanProductStore = useLoanProductStore();
 
-  const farmerLimits = [
-    {
-      id: 449,
-      code: "FR-KUEXV",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 444,
-      farmer_name: "Edwin Kitur",
-      farmer_id_no: "22222222",
-      min_amount: 1000,
-      max_amount: 10000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 505,
-      code: "FR-EUYOI",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 502,
-      farmer_name: "Emmanuel Muchiri",
-      farmer_id_no: "40382477",
-      min_amount: 1000,
-      max_amount: 10000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 550,
-      code: "FR-2GDF5",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 543,
-      farmer_name: "Dolbert Omari",
-      farmer_id_no: "50382477",
-      min_amount: 1000,
-      max_amount: 10000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 586,
-      code: "FR-1MUA7",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 584,
-      farmer_name: "Albert Mulei",
-      farmer_id_no: "44463321",
-      min_amount: 1000,
-      max_amount: 10000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 588,
-      code: "FR-ZO7I4",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 584,
-      farmer_name: "Albert Mulei",
-      farmer_id_no: "44463321",
-      min_amount: 1000,
-      max_amount: 15000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 599,
-      code: "FR-CXH0E",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 597,
-      farmer_name: "Roza Ngeno",
-      farmer_id_no: "22859213",
-      min_amount: 1000,
-      max_amount: 15000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 607,
-      code: "FR-DGAIQ",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 604,
-      farmer_name: "Roza Ngeno",
-      farmer_id_no: "22856500",
-      min_amount: 1000,
-      max_amount: 15000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 614,
-      code: "FR-YFHKB",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 612,
-      farmer_name: "Valentine Wambui",
-      farmer_id_no: "60382477",
-      min_amount: 1000,
-      max_amount: 25000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 636,
-      code: "FR-JA34V",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 634,
-      farmer_name: "Kiprono Tanui",
-      farmer_id_no: "70382477",
-      min_amount: 1000,
-      max_amount: 30000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-    {
-      id: 703,
-      code: "FR-X2AS5",
-      loan_product_code: "LP-XWZ48QVG",
-      loan_product_name: "Dairy Loan",
-      category: null,
-      farmer_id: 667,
-      farmer_name: "John Deng",
-      farmer_id_no: "80382478",
-      min_amount: 1000,
-      max_amount: 20000,
-      loan_min_amount: 50,
-      loan_max_amount: 10000,
-      status: true,
-    },
-  ];
+  const farmerLimit = computed(() => store.farmerLimit);
 
-  const farmerLimitsCount = computed(() => 10);
+  const farmerLimits = computed(() => store.farmerLimits);
+
+  const farmerLimitsCount = computed(() => store.farmerLimits.length);
+
+  const agroDealers = computed(() => store.getAgroDealers);
+
+  const agroDealer = computed(() => store.agroDealer);
+
+  const agroDealersCount = computed(() => store.getAgroDealersCount);
+
+  const loanProduct = computed(() => store.loanProduct);
+
+  const loanProducts = computed(() => store.getLoanProducts);
+
+  const loanProductsCount = computed(() => store.getLoanProductsCount);
+
+  const currency = computed(() => store.currency);
+
+  const currencies = computed(() => store.getCurrencies);
+
+  const currenciesCount = computed(() => store.getCurrenciesCount);
+
+  const item = computed(() => store.item);
+
+  const items = computed(() => store.getItems);
+
+  const itemsCount = computed(() => store.getItemsCount);
+
+  async function fetchFarmerLimits(): Promise<void> {
+    try {
+      await store.fetchFarmerLimits();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createFarmerLimit(payload): Promise<void> {
+    try {
+      await limitStore.registerFarmerLimits(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateFarmerLimits(payload): Promise<void> {
+    try {
+      await limitStore.updateFarmerLimits(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function deleteFarmerLimits(payload): Promise<void> {
+    try {
+      await limitStore.deleteFarmerLimits(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createLoanProduct(payload): Promise<void> {
+    try {
+      await loanProductStore.createLoanProduct(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchLoanProducts(): Promise<void> {
+    try {
+      await store.fetchLoanProducts();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateLoanProduct(payload): Promise<void> {
+    try {
+      await loanProductStore.updateLoanProduct(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createAgroDealer(payload): Promise<void> {
+    try {
+      await store.createAgroDealer(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchAgroDealers(): Promise<void> {
+    try {
+      await store.fetchAgroDealers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchAgroDealer(payload): Promise<void> {
+    try {
+      await store.fetchAgroDealer(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateAgroDealer(payload): Promise<void> {
+    try {
+      await store.updateAgroDealer(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createCurrency(payload): Promise<void> {
+    try {
+      await store.createCurrency(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchCurrencies(): Promise<void> {
+    try {
+      await store.fetchCurrencies();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateCurrency(payload): Promise<void> {
+    try {
+      await store.updateCurrency(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchItems(): Promise<void> {
+    try {
+      await store.fetchItems();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // async function fetchItem(payload): Promise<void> {
+  //   try {
+  //     await store.fetchItem(payload);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  async function createItem(payload): Promise<void> {
+    try {
+      await store.createItem(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateItem(payload): Promise<void> {
+    try {
+      await store.updateItem(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setFarmerLimit(payload): Promise<void> {
+    try {
+      console.log("setting");
+      await store.setFarmerLimit(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setLoanProduct(payload): Promise<void> {
+    try {
+      await store.setLoanProduct(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setAgroDealer(payload): Promise<void> {
+    try {
+      await store.setAgroDealer(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setCurrency(payload): Promise<void> {
+    try {
+      await store.setCurrency(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setItem(payload): Promise<void> {
+    try {
+      await store.setItem(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return {
+    loanProduct,
+    loanProducts,
+    loanProductsCount,
+    farmerLimit,
     farmerLimits,
     farmerLimitsCount,
+    agroDealer,
+    agroDealers,
+    agroDealersCount,
+    item,
+    items,
+    itemsCount,
+    currency,
+    currencies,
+    currenciesCount,
+    createFarmerLimit,
+    createCurrency,
+    createLoanProduct,
+    createAgroDealer,
+    createItem,
+    fetchFarmerLimits,
+    fetchLoanProducts,
+    fetchAgroDealers,
+    fetchAgroDealer,
+    fetchCurrencies,
+    fetchItems,
+    setAgroDealer,
+    setCurrency,
+    setFarmerLimit,
+    setItem,
+    setLoanProduct,
+    updateFarmerLimits,
+    updateAgroDealer,
+    updateCurrency,
+    updateItem,
+    updateLoanProduct,
+    deleteFarmerLimits,
   };
 }
