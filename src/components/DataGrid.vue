@@ -48,7 +48,7 @@
             >
               <template #extra>
                 <a-button
-                  @click="editLoanStatus(record, index)"
+                  @click="editLoanStatus(record)"
                   type="primary"
                   class="success_button"
                 >
@@ -253,61 +253,11 @@
     </template>
 
     <template #name="{ record }">
-      <!-- <a-typography-link :href="`/${label}/${record.id}`"> -->
       <a-typography-link :href="`/farmer/${record.id}`">
-        <template
-          v-if="
-            label === 'students' ||
-            label === 'guardians' ||
-            label === 'teachers'
-          "
-        >
-          {{ record.first_name }} {{ record.middle_name }}
-          {{ record.last_name }}
-        </template>
-
-        <template
-          v-else-if="
-            label === 'exams' ||
-            label === 'lesson-plans' ||
-            label === 'record-of-works'
-          "
-        >
-          {{ record.id }}
-        </template>
-
-        <template v-else-if="label === 'transport'">
-          {{ record.label }}
-        </template>
-
-        <template v-else-if="label === 'assignments'">
-          {{ record.description }}
-        </template>
-
-        <template v-else>
-          <!-- <span style="width: 300px"> -->
-          {{ record.full_names }}
-          <!-- </span> -->
-        </template>
+        <span style="width: 300px">
+          {{ record.fname }} {{ record.lname }}
+        </span>
       </a-typography-link>
-    </template>
-
-    <template #examAssessments="{ record }">
-      <a-typography-link
-        :href="`/exams/${record.exam_group?.id}/assess/${record.id}`"
-      >
-        {{ record.id }}
-      </a-typography-link>
-    </template>
-
-    <template #timetableLabel="{ record }">
-      <template v-if="record.label">
-        {{ record.label }}
-      </template>
-
-      <template v-else>
-        {{ record?.learning_area?.name }}
-      </template>
     </template>
 
     <template #photo="{ text }">
@@ -376,62 +326,19 @@
       {{ text }}
     </template>
 
-    <template #currency="{ text }"> KShs. {{ text }} </template>
+    <template #currency="{ text }">
+      <template v-if="text"> KShs. {{ text }} </template>
+    </template>
+
+    <template #boolean="{ text }"> {{ text ? "Yes" : "No" }} </template>
 
     <template #dateTime="{ text }">
       {{ new Date(text).toDateString() }}
       {{ new Date(text).toLocaleTimeString() }}
     </template>
 
-    <!-- <template #timestamp="{ text }">
-      <small>
-        {{ moment(new Date(text)).format("LLLL") }}
-        sth abt
-      </small>
-    </template> -->
-
     <template #action="{ record }">
       <span class="actions-cell">
-        <template
-          v-if="
-            label === 'duty-rosters' ||
-            label === 'guardians' ||
-            label === 'teams' ||
-            label === 'students' ||
-            label === 'teachers'
-          "
-        >
-          <a-button type="text" @click="openMessageDrawer(record)">
-            <MessageOutlined />
-          </a-button>
-
-          <a-drawer
-            title="Message's Form"
-            placement="right"
-            :closable="false"
-            :mask-closable="false"
-            size="large"
-            v-model:visible="visible"
-            @after-visible-change="afterVisibleChange"
-          >
-            <a-spin :spinning="messageLoading">
-              <a-form-item>
-                <!-- <a-textarea v-model:value="messageRequest.message" :rows="4" /> -->
-              </a-form-item>
-
-              <a-form-item>
-                <a-button type="primary" @click.prevent="sendMessage">
-                  Send Message
-                </a-button>
-
-                <a-button @click="visible = false"> Cancel </a-button>
-              </a-form-item>
-            </a-spin>
-          </a-drawer>
-
-          <a-divider type="vertical" />
-        </template>
-
         <a-button type="link" @click="$emit('edit', record)">
           <EditOutlined />
         </a-button>
@@ -440,7 +347,7 @@
           title="Are you sure delete?"
           ok-text="Yes"
           cancel-text="No"
-          @confirm="$emit('remove', record.id)"
+          @confirm="$emit('remove', record)"
         >
           <a-button type="link">
             <DeleteOutlined />
@@ -448,42 +355,29 @@
         </a-popconfirm>
       </span>
     </template>
+
+    <template #editAction="{ record }">
+      <span class="actions-cell">
+        <a-button type="link" @click="$emit('edit', record)">
+          <EditOutlined />
+        </a-button>
+      </span>
+    </template>
   </a-table>
 </template>
 
 <script lang="ts">
-// import { computed, defineComponent, PropType, ref } from "vue";
 import { computed, defineComponent, ref } from "vue";
 
-// import moment from "moment";
-
+import { LoanStatusForm } from "@/components/Forms";
+import { useLoans } from "@/composables";
 import {
   DeleteOutlined,
   EditOutlined,
-  MessageOutlined,
   SearchOutlined,
   UserOutlined,
-  DownOutlined,
 } from "@ant-design/icons-vue";
 import { useRoute } from "vue-router";
-import { useLoansStore } from "@/stores/loans";
-import { useLoans } from "@/composables";
-import { LoanStatusForm } from "@/components/Forms";
-// import type {
-//   TableState,
-//   TableStateFilters,
-// } from "ant-design-vue/es/table/interface";
-
-// import useMessage from "@/uses/useMessage";
-
-// import { IApiQueryParams } from "@/interfaces/ApiQueryParams";
-// import { IColumn } from "@/interfaces/Column";
-// import { IDutyRosterResponse, ITeacher } from "@/interfaces/DutyRosters";
-// import { IGuardianResponse } from "@/interfaces/Guardians";
-// import { IMessageRequest } from "@/interfaces/Messages";
-// import { IGuardian, ITeamResponse } from "@/interfaces/Teams";
-// import { ISort } from "@/interfaces/Sort";
-// import { IStudentResponse } from "@/interfaces/Students";
 
 export default defineComponent({
   name: "DataGrid",
@@ -491,16 +385,13 @@ export default defineComponent({
   components: {
     DeleteOutlined,
     EditOutlined,
-    MessageOutlined,
     SearchOutlined,
     UserOutlined,
-    DownOutlined,
     LoanStatusForm,
   },
 
   props: {
     columns: {
-      // type: Array as PropType<IColumn[]>,
       type: Array,
       required: true,
     },
@@ -547,13 +438,12 @@ export default defineComponent({
   ],
 
   setup(props, { emit }) {
-    // const { createMessage } = useMessage();
     const { loanStatusList, setLoan } = useLoans();
     const route = useRoute();
 
     const current = ref<number>(1);
 
-    const pageSize = ref<number>(20);
+    const pageSize = ref<number>(50);
 
     const pagination = computed(() => ({
       total: props.total,
@@ -563,15 +453,7 @@ export default defineComponent({
       pageSizeOptions: ["10", "25", "50", "100", "500", "1000", "2000"],
     }));
 
-    // const apiBaseUrl = process.env.VUE_APP_API_BASE_URL;
-
     const selectedKeys = ref<Record<string, string>>({});
-
-    // const apiQueryParams = ref<IApiQueryParams>({
-    //   pag: null,
-    //   filters: null,
-    //   sorter: null,
-    // });
 
     const visible = ref<boolean>(false);
 
@@ -587,17 +469,13 @@ export default defineComponent({
 
     const loanStatusVisible = ref<boolean>(false);
 
-    const editLoanStatus = async (loanItem, index) => {
-      // loanStatusValue.value = loanStatus;
-      // selectedRecord.value = index;
-      // TODO ---- set loan details
+    const editLoanStatus = async (loanItem) => {
       setLoan(loanItem);
-      console.log(loanItem);
       isEditingLoanStatus.value = true;
       loanStatusVisible.value = true;
     };
 
-    const editRecord = ref();
+    // const editRecord = ref();
 
     // const messageRequest = ref<IMessageRequest>({
     //   message: "",
@@ -605,17 +483,11 @@ export default defineComponent({
     //   phones: [],
     // });
 
-    const openMessageDrawer = (record) =>
-      // record:
-      // | IGuardianResponse
-      // | IDutyRosterResponse
-      // | ITeamResponse
-      // | IStudentResponse
-      {
-        console.log(record)
-        // editRecord.value = record;
-        visible.value = true;
-      };
+    const openMessageDrawer = (record) => {
+      console.log(record);
+      // editRecord.value = record;
+      visible.value = true;
+    };
 
     const handleTableChange = (): // pag,
     // filters,
@@ -659,44 +531,6 @@ export default defineComponent({
       emit("handle-search", selectedKeys.value);
     };
 
-    const sendMessage = async () => {
-      messageLoading.value = true;
-      try {
-        // if (props.label === "guardians") {
-        //   messageRequest.value.phones.push(
-        //     editRecord.value.phone_number.toString()
-        //   );
-        // } else if (props.label === "duty-rosters") {
-        //   messageRequest.value.phones = editRecord.value.teachers.map(
-        //     (el: ITeacher) => el.phone_number
-        //   );
-        // } else if (props.label === "teams") {
-        //   const guardiansPhoneNumbers = editRecord.value.guardians.map(
-        //     (el: IGuardian) => el.phone_number
-        //   );
-        //   const teachersPhoneNumbers = editRecord.value.teachers.map(
-        //     (el: ITeacher) => el.phone_number
-        //   );
-        //   messageRequest.value.phones =
-        //     guardiansPhoneNumbers.concat(teachersPhoneNumbers);
-        // } else if (props.label === "students") {
-        //   messageRequest.value.phones = editRecord.value.guardians.map(
-        //     (el: IGuardian) => el.phone_number
-        //   );
-        // } else if (props.label === "teachers") {
-        //   messageRequest.value.phones.push(
-        //     editRecord.value.phone_number.toString()
-        //   );
-        // }
-        // // await createMessage(messageRequest.value);
-        // visible.value = false;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        messageLoading.value = false;
-      }
-    };
-
     const loanStatusForm = ref<InstanceType<typeof LoanStatusForm>>();
 
     const closeLoanStatusDrawer = () => {
@@ -712,16 +546,12 @@ export default defineComponent({
     };
 
     return {
-      // moment,
-      // apiBaseUrl,
-      // apiQueryParams,
       pagination,
       visible,
       isEditingLoanStatus,
       visiblePopConfirm,
       route,
       selectedRecord,
-      // messageRequest,
       messageLoading,
       selectedKeys,
       loanStatusValue,
@@ -734,7 +564,6 @@ export default defineComponent({
       handleTableChange,
       afterVisibleChange,
       openMessageDrawer,
-      sendMessage,
       handleStatusMenuClick,
     };
   },
