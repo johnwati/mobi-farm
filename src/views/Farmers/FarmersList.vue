@@ -45,6 +45,7 @@
         ref="farmersForm"
         :is-editing="isEditing"
         @close-drawer="closeDrawer"
+        @submitted="onSubmit"
       />
     </a-drawer>
   </div>
@@ -201,26 +202,34 @@ export default defineComponent({
       },
     ]);
 
-    const {
-      farmer,
-      farmers,
-      farmerCount,
-      fetchFarmers,
-      setFarmer,
-      deleteFarmer,
-    } = useFarmers();
+    const { farmers, farmerCount, fetchFarmers, setFarmer, deleteFarmer } =
+      useFarmers();
 
     onMounted(async () => {
+      loading.value = true;
       try {
         await fetchFarmers();
       } catch (error) {
         console.error(error);
+      } finally {
+        loading.value = false;
       }
     });
 
-    const closeDrawer = () => {
+    const closeDrawer = async () => {
       visible.value = false;
       isEditing.value = false;
+    };
+
+    const onSubmit = async () => {
+      loading.value = true;
+      try {
+        await fetchFarmers();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loading.value = false;
+      }
     };
 
     const afterVisibleChange = (status: boolean) => {
@@ -237,10 +246,10 @@ export default defineComponent({
       visible.value = true;
     };
 
-    const removeFarmer = async (farmerId: number) => {
+    const removeFarmer = async (farmer) => {
       try {
         loading.value = true;
-        await deleteFarmer(farmerId);
+        await deleteFarmer(farmer.id);
         console.log("deleting farmer");
       } catch (error) {
         console.error(error);
@@ -257,8 +266,7 @@ export default defineComponent({
           //   'school.id': schoolId.value,
           //   ...selectedKeys,
           // });
-
-          const queryParams = {};
+          // const queryParams = {};
           // await fetchFarmers(queryParams);
         }
       } catch (error) {
@@ -276,6 +284,7 @@ export default defineComponent({
       farmersForm,
       isEditing,
       farmerCount,
+      onSubmit,
       closeDrawer,
       afterVisibleChange,
       editFarmer,

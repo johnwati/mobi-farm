@@ -5,7 +5,9 @@
         <a-typography-link href="/dashboard"> Dashboard </a-typography-link>
       </a-breadcrumb-item>
 
-      <a-breadcrumb-item>{{ farmer.full_names }}</a-breadcrumb-item>
+      <a-breadcrumb-item>
+        {{ farmer.fname + " " + farmer.lname }}
+      </a-breadcrumb-item>
     </a-breadcrumb>
 
     <a-tabs v-model:activeKey="activeKey" class="tabs" type="card">
@@ -28,6 +30,7 @@
                 <a-row type="flex" justify="flex-start">
                   <a-col>
                     <a-avatar
+                      :src="farmer.image"
                       :size="{
                         xs: 24,
                         sm: 32,
@@ -43,9 +46,9 @@
                     </a-avatar>
                   </a-col>
                   <a-col style="padding: 10px">
-                    <a-typography-title :level="4">{{
-                      farmer.full_names
-                    }}</a-typography-title>
+                    <a-typography-title :level="4">
+                      {{ farmer.fname + " " + farmer.lname }}
+                    </a-typography-title>
                     <a-typography-text type="secondary">{{
                       farmer.phone_number
                     }}</a-typography-text>
@@ -58,7 +61,7 @@
                   <a-button
                     style="margin: 5px"
                     type="primary"
-                    @click="formVisible = true"
+                    @click="() => openEditForm('farmerDetails')"
                   >
                     <template #icon>
                       <EditFilled />
@@ -69,13 +72,13 @@
                   <a-button
                     style="margin: 5px"
                     type="primary"
-                    @click="formVisible = true"
+                    @click="() => openEditForm('farmerLimits')"
                   >
                     <template #icon>
                       <EditFilled />
                     </template>
 
-                    Edit Limits
+                    Create Limits
                   </a-button>
                 </a-col>
               </a-row>
@@ -108,7 +111,7 @@
                       :precision="2"
                       prefix="KShs. "
                       :value-style="{ fontWeight: 'bold' }"
-                      :value="farmerAccountBalance"
+                      :value="farmer.loan_limit"
                     />
                   </a-card>
                 </a-col>
@@ -119,7 +122,7 @@
                       :precision="2"
                       prefix="KShs. "
                       :value-style="{ fontWeight: 'bold' }"
-                      :value="farmer.loan_limit"
+                      :value="farmer.loan_limit || 0"
                     />
                   </a-card>
                 </a-col>
@@ -130,7 +133,7 @@
                       :precision="2"
                       prefix="KShs. "
                       :value-style="{ fontWeight: 'bold' }"
-                      :value="farmer.deposit_limit"
+                      :value="farmer.deposit_limit || 0"
                     />
                   </a-card>
                 </a-col>
@@ -256,7 +259,7 @@
       <a-tab-pane key="2" tab="Loans" force-render>
         <DataGrid
           label="farmer"
-          :total="loanCount"
+          :total="farmerLoansCount"
           :data-source="farmerLoans"
           :columns="columns"
           :loading="loading"
@@ -292,42 +295,68 @@
       @after-visible-change="afterVisibleChange"
     >
       <farmers-form
+        v-if="formType === 'farmerDetails'"
         ref="farmersForm"
         :is-editing="true"
         @close-drawer="closeDrawer"
       />
+      <farmer-limit-form
+        v-else-if="formType === 'farmerLimits'"
+        ref="farmersForm"
+        :is-editing="false"
+        @close-drawer="closeDrawer"
+      />
     </a-drawer>
+
+    <!-- <a-drawer
+      title="Farmer's Limits"
+      placement="right"
+      :closable="false"
+      :mask-closable="false"
+      size="large"
+      v-model:visible="limitsFormVisible"
+      @after-visible-change="afterVisibleChange"
+    >
+      <farmers-form
+        ref="farmersForm"
+        :is-editing="true"
+        @close-drawer="closeDrawer"
+      />
+    </a-drawer> -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import { PlusOutlined, UserOutlined, EditFilled } from "@ant-design/icons-vue";
 import DataGrid from "@/components/DataGrid.vue";
-import { FarmersForm } from "@/components/Forms";
+import { FarmerLimitForm, FarmersForm } from "@/components/Forms";
 import DepositsTable from "@/components/Tables/DepositsTable.vue";
 import PaymentsTable from "@/components/Tables/PaymentsTable.vue";
 import { useFarmers, useLoans } from "@/composables";
-import { useRoute, useRouter } from "vue-router";
+import { EditFilled, UserOutlined } from "@ant-design/icons-vue";
+import { defineComponent, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+
 export default defineComponent({
   name: "FarmerView",
   components: {
     DataGrid,
-    PlusOutlined,
     UserOutlined,
     EditFilled,
     FarmersForm,
     DepositsTable,
     PaymentsTable,
+    FarmerLimitForm,
   },
   setup() {
-    const { loans, farmerLoans, loanCount, loanStatusList } = useLoans();
+    const { loans, loanCount, loanStatusList } = useLoans();
     const loading = ref<boolean>(false);
 
     const activeKey = ref("1");
     const route = useRoute();
 
     const formVisible = ref<boolean>(false);
+
+    const formType = ref<string>("farmerDetails");
 
     const farmersForm = ref<InstanceType<typeof FarmersForm>>();
 
@@ -539,15 +568,26 @@ export default defineComponent({
       farmer,
       farmerAccountBalance,
       fetchFarmer,
+      fetchLoanPayments,
+      fetchDeposits,
+      farmerLoans,
+      farmerLoansCount,
       farmerDeposits,
       farmerDepositCount,
       farmerLoanPayments,
       farmerPaymentsCount,
+      fetchFarmerLoans,
     } = useFarmers();
 
     onMounted(async () => {
       try {
-        // await fetchFarmer(route.params.farmerId);
+        const data = await fetchFarmer(
+          parseInt(route.params.farmerId as string)
+        );
+        console.log("mounting", farmer);
+        await fetchDeposits(data.farmer_code);
+        await fetchLoanPayments(data.farmer_code);
+        await fetchFarmerLoans(data.farmer_code);
       } catch (error) {
         console.error(error);
       }
@@ -563,9 +603,16 @@ export default defineComponent({
       formVisible.value = false;
     };
 
+    const openEditForm = (type: string) => {
+      formVisible.value = true;
+      formType.value = type;
+    };
+
     return {
+      formType,
       loans,
       farmerLoans,
+      farmerLoansCount,
       loanCount,
       loanStatusList,
       columns,
@@ -579,6 +626,7 @@ export default defineComponent({
       farmerPaymentsCount,
       farmerAccountBalance,
       afterVisibleChange,
+      openEditForm,
       closeDrawer,
     };
   },
