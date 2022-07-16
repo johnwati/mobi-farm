@@ -1,100 +1,138 @@
 <template>
   <a-spin :spinning="loading">
     <a-form
-      v-if="!isEditing"
       layout="vertical"
       ref="farmersForm"
       :rules="rules"
       :model="formState"
     >
+      <a-form-item label="Photo" name="photo">
+        <avatar-picker />
+      </a-form-item>
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="First Name" name="first_name">
+            <a-input v-model:value="formState.first_name" type="text" />
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Last Name" name="last_name">
+            <a-input v-model:value="formState.last_name" type="text" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-form-item label="ID Number" name="id_no">
+        <a-input v-model:value="formState.id_number" type="text" />
+      </a-form-item>
+
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Phone Number" name="phone_number">
+            <a-input-number
+              v-model:value="formState.phone_number"
+              style="width: 100%"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Email Address" name="email">
+            <a-input v-model:value="formState.email" type="text" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Gender" name="gender">
+            <a-input v-model:value="formState.gender" type="text" />
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Occupation" name="occupation">
+            <a-input v-model:value="formState.occupation" type="text" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
       <a-form-item label="Sales Agent Code" name="sale_agent_code">
         <a-input v-model:value="formState.sale_agent_code" type="text" />
       </a-form-item>
 
-      <a-form-item label="ID Number" name="id_no">
-        <a-input v-model:value="formState.id_no" type="text" />
+      <a-form-item label="Region" name="region">
+        <a-input v-model:value="formState.region" type="text" />
       </a-form-item>
 
-      <a-form-item label="Phone Number" name="phone_number">
-        <a-input-number
-          v-model:value="formState.phone_number"
-          addon-before="+254"
-          :parser="(value) => `+254${value}`"
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="County" name="county">
+            <a-input v-model:value="formState.county" type="text" />
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Ward" name="ward">
+            <a-input v-model:value="formState.ward" type="text" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-form-item label="Value Chain" name="value_chaim">
+        <a-input v-model:value="formState.value_chain" type="text" />
+      </a-form-item>
+
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Farm Size" name="farm_size">
+            <a-input v-model:value="formState.farm_size" type="text" />
+          </a-form-item>
+        </a-col>
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Farm Coordinates" name="farm_coordinates">
+            <a-input v-model:value="formState.farm_coordinates" type="text" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <a-form-item label="Soil Types" name="soil_types">
+        <a-input v-model:value="formState.soil_types" type="text" />
+      </a-form-item>
+
+      <a-form-item label="Modules Trained" name="modules_trained">
+        <a-input v-model:value="formState.modules_trained" type="text" />
+      </a-form-item>
+
+      <a-form-item label="Actual Plant Date" name="actual_plant_date">
+        <a-input v-model:value="formState.actual_plant_date" type="text" />
+      </a-form-item>
+
+      <a-form-item label="Collaterals" name="collaterals">
+        <a-input v-model:value="formState.collaterals" type="text" />
+      </a-form-item>
+
+      <a-form-item
+        label="Collateral Net Book value"
+        name="collateral_net_book_value"
+      >
+        <a-input
+          v-model:value="formState.collateral_net_book_value"
+          type="text"
         />
       </a-form-item>
 
-      <a-form-item label="First Name" name="first_name">
-        <a-input v-model:value="formState.first_name" type="text" />
+      <a-form-item label="Next of Kin" name="next_of_kin_msisdn">
+        <a-input v-model:value="formState.next_of_kin_msisdn" type="text" />
       </a-form-item>
 
-      <a-form-item label="Last Name" name="last_name">
-        <a-input v-model:value="formState.last_name" type="text" />
+      <a-form-item label="Next of Kin Email" name="next_of_kin_email">
+        <a-input v-model:value="formState.next_of_kin_email" type="text" />
       </a-form-item>
 
-      <a-form-item label="Password" name="password">
-        <a-input v-model:value="formState.password" type="password" />
+      <a-form-item label="Marital Status" name="marital_status">
+        <a-input v-model:value="formState.marital_status" type="text" />
       </a-form-item>
 
-      <a-form-item>
-        <a-button type="primary" @click.prevent="submit">
-          {{ isEditing ? "Update" : "Create" }}
-        </a-button>
-
-        <a-button style="margin-left: 10px" @click="reset"> Cancel </a-button>
-      </a-form-item>
-    </a-form>
-    <a-form
-      v-else
-      layout="vertical"
-      ref="updateFarmersForm"
-      :rules="updateRules"
-      :model="updateFormState"
-    >
-      <a-form-item label="Photo" name="photo">
-        <avatar-picker />
-      </a-form-item>
-      <a-form-item label="Name" name="full_names">
-        <a-input v-model:value="updateFormState.full_names" type="text" />
-      </a-form-item>
-
-      <a-form-item label="ID Number" name="id_no">
-        <a-input v-model:value="updateFormState.id_no" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Phone Number" name="phone_number">
-        <a-input v-model:value="updateFormState.phone_number" />
-      </a-form-item>
-
-      <a-form-item label="Sales Agent Code" name="sale_agent_code">
-        <a-input v-model:value="updateFormState.sale_agent_code" type="text" />
-      </a-form-item>
-
-      <a-form-item label="County" name="county">
-        <a-input v-model:value="updateFormState.county" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Ward" name="ward">
-        <a-input v-model:value="updateFormState.ward" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Value Chain" name="value_chaim">
-        <a-input v-model:value="updateFormState.value_chaim" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Farm Size" name="farm_size">
-        <a-input v-model:value="updateFormState.farm_size" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Payment Method" name="payment_method">
-        <a-input v-model:value="updateFormState.payment_method" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Account Number" name="account_number">
-        <a-input v-model:value="updateFormState.account_number" type="text" />
-      </a-form-item>
-
-      <a-form-item label="Account Name" name="account_name">
-        <a-input v-model:value="updateFormState.account_name" type="text" />
+      <a-form-item label="Other source of income" name="other_source_od_income">
+        <a-input v-model:value="formState.other_source_od_income" type="text" />
       </a-form-item>
 
       <a-form-item>
@@ -109,11 +147,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
 import { useFarmers } from "@/composables";
 import { AvatarPicker } from "@/components/Forms";
-
-// import { IStudentRequest } from "@/interfaces/Students";
 
 export default defineComponent({
   name: "FarmersForm",
@@ -129,94 +164,75 @@ export default defineComponent({
     },
   },
 
-  emits: ["close-drawer"],
+  emits: ["close-drawer", "submitted"],
 
   setup(props, { emit }) {
-    const { farmer, fetchFarmer, createFarmer, updateFarmer } = useFarmers();
+    const { farmer, createFarmer, updateFarmer } = useFarmers();
 
-    // const farmerr = ref(farmer);
     const farmersForm = ref();
-    const updateFarmersForm = ref();
 
     const loading = ref<boolean>(false);
 
-    const formState = ref<IFarmerRegistration>({
-      sale_agent_code: "",
-      id_no: "",
-      phone_number: "",
+    const formState = ref({
       first_name: "",
       last_name: "",
-      password: "",
-    });
-
-    const updateFormState = ref<IFarmer>({
-      id: 0,
-      company_id: "",
-      version: 0,
-      created_on: "",
-      created_by: "",
-      last_modified_on: "",
-      last_modified_by: "",
-      farmer_code: "",
       sale_agent_code: "",
-      id_no: "",
+      id_number: "",
+      phone_number: "",
+      email: "",
+      gender: "Male",
+      occupation: "",
+      region: "",
       county: "",
       ward: "",
-      value_chaim: "",
+      value_chain: "",
       farm_size: "",
-      photo: "",
-      signature: "",
-      additional_fields: "",
-      phone_number: "",
-      full_names: "",
-      farmer_id: "",
-      payment_method: "MPESA",
-      account_number: "",
-      account_name: "",
-      status: "PENDING_REGISTRATION",
-      new: false,
+      farm_coordinates: "",
+      soil_types: "",
+      modules_trained: "",
+      actual_plant_date: "",
+      collaterals: "",
+      collateral_net_book_value: "",
+      next_of_kin_msisdn: "",
+      next_of_kin_email: "",
+      marital_status: "",
+      other_source_od_income: "",
     });
 
     const rules = ref({
-      sale_agent_code: [{ required: true }],
-      id_no: [{ required: true }],
+      sale_agent_code: [{ required: false }],
+      id_number: [{ required: true }],
       phone_number: [{ required: true }],
       first_name: [{ required: true }],
       last_name: [{ required: true }],
-      password: [{ required: true }],
-    });
-
-    const updateRules = ref({
-      sale_agent_code: [{ required: true }],
-      id_no: [{ required: true }],
-      phone_number: [{ required: true }],
-      full_names: [{ required: true }],
     });
 
     const submit = async () => {
       loading.value = true;
       try {
+        await farmersForm.value.validate();
         if (props.isEditing) {
-          await updateFarmersForm.value.validate();
-          await updateFarmer(updateFormState.value);
-          updateFarmersForm.value.resetFields();
+          await updateFarmer({
+            id: farmer.value.id,
+            data: formState.value,
+          });
         } else {
-          await farmersForm.value.validate();
           await createFarmer(formState.value);
-          farmersForm.value.resetFields();
         }
+        farmersForm.value.resetFields();
       } catch (error) {
         console.error(error);
       } finally {
         loading.value = false;
         emit("close-drawer");
+        emit("submitted");
       }
     };
 
     const reset = () => {
       try {
         if (props.isEditing) {
-          updateFarmersForm.value.resetFields();
+          farmersForm.value.resetFields();
         } else {
           farmersForm.value.resetFields();
         }
@@ -243,58 +259,58 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            // const guardiansIds = student.value.guardians.map((el) => el.id);
-
-            // await fetchFarmer({ "school.id": schoolId.value });
-            // await fetchGuardians({
-            //   "children.school.id": schoolId.value,
-            //   id_in: guardiansIds,
-            // });
-
-            // await fetchClassrooms({ "school.id": schoolId.value });
-            // await fetchGuardians({
-            //   "children.school.id": schoolId.value,
-            //   id_in: guardiansIds,
-            // });
             console.log(farmer.value, "watching");
-
-            // updateFormState.value = { ...farmer, id: farmer.id };
-            updateFormState.value = {
-              id: farmer.value.id,
-              company_id: farmer.value.company_id,
-              version: farmer.value.version,
-              created_on: farmer.value.created_on,
-              created_by: farmer.value.created_by,
-              last_modified_on: farmer.value.last_modified_on,
-              last_modified_by: farmer.value.last_modified_by,
-              farmer_code: farmer.value.farmer_code,
+            formState.value = {
+              first_name: farmer.value.fname,
+              last_name: farmer.value.lname,
               sale_agent_code: farmer.value.sale_agent_code,
-              id_no: farmer.value.id_no,
+              id_number: farmer.value.id_no,
+              phone_number: farmer.value.phone,
+              email: farmer.value.email,
+              gender: farmer.value.gender,
+              occupation: farmer.value.occupation,
+              region: farmer.value.region,
               county: farmer.value.county,
               ward: farmer.value.ward,
-              value_chaim: farmer.value.value_chaim,
+              value_chain: farmer.value.value_chaim,
               farm_size: farmer.value.farm_size,
-              photo: farmer.value.photo,
-              signature: farmer.value.signature,
-              additional_fields: farmer.value.additional_fields,
-              phone_number: farmer.value.phone_number,
-              full_names: farmer.value.full_names,
-              farmer_id: farmer.value.farmer_id,
-              payment_method: farmer.value.payment_method,
-              account_number: farmer.value.account_number,
-              account_name: farmer.value.account_name,
-              status: farmer.value.status,
-              new: farmer.value.new,
+              farm_coordinates: farmer.value.farmer_coordinates,
+              soil_types: farmer.value.soil_types,
+              modules_trained: farmer.value.modules_trained,
+              actual_plant_date: farmer.value.actual_plant_date,
+              collaterals: farmer.value.collaterals,
+              collateral_net_book_value: farmer.value.collateral_net_book_value,
+              next_of_kin_msisdn: farmer.value.next_of_kin_msisdn,
+              next_of_kin_email: farmer.value.next_of_kin_email,
+              marital_status: farmer.value.marital_status,
+              other_source_od_income: farmer.value.other_source_od_income,
             };
-            console.log(updateFormState, "state");
+            console.log(formState, "state");
           } else {
             formState.value = {
-              sale_agent_code: "",
-              id_no: "",
-              phone_number: "",
               first_name: "",
               last_name: "",
-              password: "",
+              sale_agent_code: "",
+              id_number: "",
+              phone_number: "",
+              email: "",
+              gender: "Male",
+              occupation: "",
+              region: "",
+              county: "",
+              ward: "",
+              value_chain: "",
+              farm_size: "",
+              farm_coordinates: "",
+              soil_types: "",
+              modules_trained: "",
+              actual_plant_date: "",
+              collaterals: "",
+              collateral_net_book_value: "",
+              next_of_kin_msisdn: "",
+              next_of_kin_email: "",
+              marital_status: "",
+              other_source_od_income: "",
             };
           }
         } catch (error) {
@@ -308,11 +324,8 @@ export default defineComponent({
 
     return {
       farmersForm,
-      updateFarmersForm,
       rules,
-      updateRules,
       formState,
-      updateFormState,
       loading,
       submit,
       reset,
