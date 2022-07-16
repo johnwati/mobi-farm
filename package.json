@@ -2,7 +2,7 @@
   "name": "mobi-farm",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 8000",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 5050",
     "typecheck": "vue-tsc --noEmit",
@@ -11,6 +11,8 @@
   "dependencies": {
     "ant-design-vue": "^3.2.5",
     "axios": "^0.27.2",
+    "highcharts": "^10.1.0",
+    "highcharts-vue": "^1.4.0",
     "less": "^4.1.2",
     "pinia": "^2.0.13",
     "vue": "^3.2.33",
