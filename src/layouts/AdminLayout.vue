@@ -41,6 +41,12 @@
             <span>Admin</span>
           </a-menu-item>
         </a-typography-link>
+        <a-typography-link href="/batch_management">
+          <a-menu-item key="BatchManagement">
+            <inbox-outlined />
+            <span>Batch Import</span>
+          </a-menu-item>
+        </a-typography-link>
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -89,18 +95,19 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 import useAuthentication from "@/composables/useAppAuthentication";
 
 import {
-  UserOutlined,
   AreaChartOutlined,
-  MoneyCollectOutlined,
-  TransactionOutlined,
-  SettingFilled,
+  InboxOutlined,
   // MenuFoldOutlined,
   MenuOutlined,
+  MoneyCollectOutlined,
+  SettingFilled,
+  TransactionOutlined,
+  UserOutlined,
 } from "@ant-design/icons-vue";
 
 export default defineComponent({
@@ -114,6 +121,7 @@ export default defineComponent({
     SettingFilled,
     // MenuFoldOutlined,
     MenuOutlined,
+    InboxOutlined,
   },
 
   setup() {
@@ -129,16 +137,11 @@ export default defineComponent({
     // @ts-ignore
     const selectedKeys = ref<string[]>([route.name]);
 
-    // const navigateTo = (path) => {
-    //   router.push(`${path}`);
-    // };
-
     return {
       selectedKeys,
       year,
       collapsed,
       logout,
-      // navigateTo,
     };
   },
 });
@@ -146,8 +149,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .page {
-  /* background: #000; */
-  /* border: #000 1px solid; */
   height: 100vh;
 }
 .logo {
