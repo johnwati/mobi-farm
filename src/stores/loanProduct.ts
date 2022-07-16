@@ -1,4 +1,3 @@
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
 import $http from "@/plugins/axios";
 import type { AxiosError } from "axios";
 import { defineStore } from "pinia";
@@ -8,12 +7,11 @@ export const useLoanProductStore = defineStore({
   state: () => ({
     loanProducts: [],
     loanProduct: {},
+    loanProductFees: [],
     loanProductStats: [],
     isLoading: false,
   }),
   getters: {
-    // getFarmers: (state) => state.farmers,
-    // getFarmer: (state) => state.farmer,
     getLoading: (state) => state.isLoading,
   },
   actions: {
@@ -24,6 +22,19 @@ export const useLoanProductStore = defineStore({
           url: `/loan-product/${code}`,
         });
         this.loanProduct = response.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchLoanFees() {
+      try {
+        const response = await $http.Api({
+          method: "GET",
+          url: `/loan-fees`,
+        });
+        this.loanProductFees = response.data.content;
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -77,7 +88,7 @@ export const useLoanProductStore = defineStore({
           url: `/loan-product/${payload.code}`,
           data: payload.data,
         });
-        console.log("registered farmer", response.data);
+        console.log("updated loan product", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

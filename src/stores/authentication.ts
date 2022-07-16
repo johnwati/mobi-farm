@@ -16,26 +16,6 @@ export const useAuthenticationStore = defineStore({
     getRole: (state) => state.role,
   },
   actions: {
-    // login(payload) {
-    // async login(
-    //   payload
-    //   // payload: ILogin,
-    // ): Promise<void> {
-    //     try {
-    //       const response = await $http.Authentication({
-    //         method: 'POST',
-    //         url: '/auth/local',
-    //         data: payload,
-    //       });
-    //       const { jwt, user } = response.data;
-    //       this.accessToken = jwt;
-    //       this.role = user?.role?.type;
-    //     } catch (error) {
-    //       const err = error as AxiosError;
-    //       throw err.response;
-    //     }
-    //   },
-    // },
     async login(payload) {
       try {
         const response = await $http.Authentication({
@@ -43,8 +23,8 @@ export const useAuthenticationStore = defineStore({
           url: "/auth/user-login",
           data: payload,
         });
-        //TODO --- handle saving token...
-        console.log("log in", response.data);
+        const { access_token } = response.data;
+        localStorage.setItem("access_token", access_token);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -73,7 +53,6 @@ export const useAuthenticationStore = defineStore({
           url: "/auth/logout",
           // data: payload,
         });
-        //TODO --- handle saving token...
         console.log("log out", response.data);
       } catch (error) {
         const err = error as AxiosError;

@@ -1,4 +1,3 @@
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
 import $http from "@/plugins/axios";
 import type { AxiosError } from "axios";
 import { defineStore } from "pinia";
@@ -20,7 +19,7 @@ export const useFarmerLimitsStore = defineStore({
       try {
         const response = await $http.Api({
           method: "GET",
-          url: "/farmers-limits",
+          url: "/farmer-limits",
         });
         this.farmersLimits = response.data;
       } catch (error) {
@@ -33,7 +32,7 @@ export const useFarmerLimitsStore = defineStore({
       try {
         const response = await $http.Api({
           method: "GET",
-          url: `/farmers-limits/${farmerId}`,
+          url: `/farmer-limits/${farmerId}`,
         });
         this.farmerLimits = response.data;
       } catch (error) {
@@ -46,7 +45,7 @@ export const useFarmerLimitsStore = defineStore({
       try {
         const response = await $http.Api({
           method: "POST",
-          url: `/farmers-limits`,
+          url: `/farmer-limits`,
           data: payload,
         });
         console.log("added farmer limits", response.data);
@@ -60,7 +59,7 @@ export const useFarmerLimitsStore = defineStore({
       try {
         const response = await $http.Api({
           method: "PUT",
-          url: `/farmers-limits/${payload.id}`,
+          url: `/farmer-limits/${payload.id}`,
           data: payload.data,
         });
         console.log("updated farmer limits", response.data);
@@ -74,7 +73,7 @@ export const useFarmerLimitsStore = defineStore({
       try {
         const response = await $http.Api({
           method: "DELETE",
-          url: `/farmers-limits/${farmerId}`,
+          url: `/farmer-limits/${farmerId}`,
         });
         console.log("deleted farmer limit", response.data);
       } catch (error) {

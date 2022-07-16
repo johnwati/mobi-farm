@@ -1,4 +1,3 @@
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
 import $http from "@/plugins/axios";
 import type { AxiosError } from "axios";
 import { defineStore } from "pinia";
@@ -83,6 +82,10 @@ export const useEnumStore = defineStore({
         label: null,
       },
     ],
+    paymentMethods: [],
+    itemCategories: [],
+    itemUom: [],
+    agrodealerCurrencies: [],
     isLoading: false,
   }),
   getters: {
@@ -97,6 +100,46 @@ export const useEnumStore = defineStore({
           url: "/loan/status-enum",
         });
         this.loanStatus = response.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchPaymentMethods() {
+      try {
+        const response = await $http.Api({
+          method: "GET",
+          url: "/loan/amortization-enum",
+        });
+        this.paymentMethods = response.data.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchItemCategories() {
+      try {
+        const response = await $http.Api3({
+          method: "GET",
+          url: "/items/$metadata",
+        });
+        this.itemCategories = response.data.data.categories;
+        this.itemUom = response.data.data.uom;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchAgrodealerMeta() {
+      try {
+        const response = await $http.Api({
+          method: "GET",
+          url: "/Agrodealers/$metadata",
+        });
+        this.agrodealerCurrencies = response.data.data.currencies;
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
