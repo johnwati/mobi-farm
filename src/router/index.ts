@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: "",
-      redirect: "/login",
+      redirect: "/dashboard",
     },
     {
       path: "/login",
@@ -15,19 +15,11 @@ const router = createRouter({
           /* webpackChunkName: "authentication" */ "../views/Authentication/Login.vue"
         ),
     },
-    // {
-    //   path: "/signup",
-    //   name: "SignUp",
-    //   component: () =>
-    //     import(
-    //       /* webpackChunkName: "authentication" */ "../views/Authentication/Signup.vue"
-    //     ),
-    // },
     {
       path: "/",
       component: () =>
         import(/* webpackChunkName: "admin" */ "../views/HomeView.vue"),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: true },
       children: [
         {
           path: "dashboard",
@@ -58,6 +50,11 @@ const router = createRouter({
           path: "admin",
           name: "AdminView",
           component: () => import("../views/AdminView.vue"),
+        },
+        {
+          path: "batch_management",
+          name: "BatchManagement",
+          component: () => import("../views/BatchImportsView.vue"),
         },
       ],
     },
@@ -100,10 +97,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  // const isAuthenticated = localStorage.getItem("access_token");
+  const isAuthenticated = localStorage.getItem("access_token");
   // const role = localStorage.getItem("role") || "user";
-  // if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated)
-  //   next({ name: "Unauthorized" });
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated)
+    next({ name: "Unauthorized" });
   // else if (
   //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //   // @ts-ignore
@@ -111,8 +108,8 @@ router.beforeEach((to, from, next) => {
   //   !to.meta.requiresRole.includes(role)
   // )
   //   next({ name: "Forbidden" });
-  // else next();
-  next();
+  else next();
+  // next();
 });
 
 export default router;
