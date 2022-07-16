@@ -19,16 +19,20 @@
       </a-form-item>
 
       <a-form-item label="Decimal Places" name="decimalPlaces">
-        <a-input v-model:value="formState.decimalPlaces" type="text" />
+        <a-input-number v-model:value="formState.decimalPlaces" />
       </a-form-item>
 
-      <a-form-item label="Format" name="decimalPlaces">
+      <a-form-item label="Format" name="format">
         <a-input v-model:value="formState.format" type="text" />
+      </a-form-item>
+
+      <a-form-item label="Active" name="active">
+        <a-switch v-model:checked="formState.active" />
       </a-form-item>
 
       <a-form-item>
         <a-button type="primary" @click.prevent="submit">
-          {{ "Update" }}
+          {{ isEditing ? "Update" : "Create" }}
         </a-button>
 
         <a-button style="margin-left: 10px" @click="reset"> Cancel </a-button>
@@ -37,9 +41,8 @@
   </a-spin>
 </template>
 <script lang="ts">
+import { useAdmin } from "@/composables";
 import { defineComponent, onMounted, ref, watch } from "vue";
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
-import { useFarmers, useLoans } from "@/composables";
 
 export default defineComponent({
   name: "CurrencyForm",
@@ -54,23 +57,24 @@ export default defineComponent({
   emits: ["close-drawer"],
 
   setup(props, { emit }) {
-    const { loan, loanStatusList, updateLoanStatus } = useLoans();
+    const { currency, createCurrency, updateCurrency } = useAdmin();
 
     const currencyForm = ref();
 
     const loading = ref<boolean>(false);
 
     const formState = ref({
+      companyId: null,
       code: "",
       symbol: "",
       name: "",
       decimalPlaces: 0,
       format: "",
+      active: true,
     });
 
     const rules = ref({
-      status: [{ required: true }],
-      comments: [{ required: true }],
+      name: [{ required: true }],
     });
 
     const submit = async () => {
@@ -79,12 +83,12 @@ export default defineComponent({
         await currencyForm.value.validate();
 
         if (props.isEditing) {
-          // await updateCurrency({
-          //   code: loan.code,
-          //   data: formState.value,
-          // });
+          await updateCurrency({
+            id: currency.value.id,
+            data: formState.value,
+          });
         } else {
-          // await createCurrency(formState.value);
+          await createCurrency(formState.value);
         }
         currencyForm.value.resetFields();
       } catch (error) {
@@ -108,7 +112,6 @@ export default defineComponent({
       loading.value = true;
       try {
         // console.log(loan);
-        // await fetchClassrooms({ "school.id": schoolId.value });
       } catch (error) {
         console.error(error);
       } finally {
@@ -122,13 +125,15 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            // formState.value = {
-            // code: currency.value.code,
-            // symbol: currency.value.symbol,
-            // name: currency.value.name,
-            // decimalPlaces: currency.value.decimalPlaces,
-            // format: currency.value.format,
-            // };
+            formState.value = {
+              companyId: currency.value.company_id,
+              code: currency.value.code,
+              symbol: currency.value.symbol,
+              name: currency.value.name,
+              decimalPlaces: currency.value.decimal_places,
+              format: currency.value.format,
+              active: currency.value.active,
+            };
           }
         } catch (error) {
           console.error(error);
@@ -140,7 +145,6 @@ export default defineComponent({
     );
 
     return {
-      // currency,
       currencyForm,
       rules,
       formState,

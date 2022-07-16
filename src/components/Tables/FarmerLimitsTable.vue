@@ -6,19 +6,40 @@
     :columns="columns"
     :loading="loading"
     :rowExpandable="false"
+    @edit="editLimit"
+    @remove="removeLimit"
   />
+
+  <a-drawer
+    title="Farmer Limits"
+    placement="right"
+    :closable="false"
+    :mask-closable="false"
+    size="large"
+    v-model:visible="formVisible"
+    @after-visible-change="afterVisibleChange"
+  >
+    <farmer-limits-form
+      ref="farmerLimitsForm"
+      :is-editing="isEditing"
+      @close-drawer="closeDrawer"
+      @submitted="onSubmit"
+    />
+  </a-drawer>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from "vue";
-// import { useFarmers } from "@/composables";
 import DataGrid from "@/components/DataGrid.vue";
+import { FarmerLimitsForm } from "@/components/Forms";
+import { useAdmin } from "@/composables";
 
 export default defineComponent({
   name: "FarmerLimitsTable",
 
   components: {
     DataGrid,
+    FarmerLimitsForm,
   },
 
   props: {
@@ -44,6 +65,9 @@ export default defineComponent({
   },
 
   setup() {
+    const { setFarmerLimit, deleteFarmerLimits, fetchFarmerLimits } =
+      useAdmin();
+
     const columns = ref([
       {
         title: "Farmer",
@@ -139,62 +163,6 @@ export default defineComponent({
         },
         // sorter: true,
       },
-      // // {
-      // //   title: "Loan Status",
-      // //   dataIndex: "status",
-      // //   key: "status",
-      // //   filterKey: "status_contains",
-      // //   filters: loanStatusList,
-      //   // slots: {
-      //   //   filterIcon: "filterIcon",
-      //   //   filterDropdown: "filterDropdown",
-      //   // },
-      //   // sorter: true,
-      // },
-      // {
-      //   title: "Interest Rate (%)",
-      //   dataIndex: "interest_rate",
-      //   key: "interest_rate",
-      //   filterKey: "interest_rate_contains",
-      //   // slots: {
-      //   //   filterIcon: "filterIcon",
-      //   //   filterDropdown: "filterDropdown",
-      //   // },
-      //   // sorter: true,
-      // },
-      // {
-      //   title: "Requested Amount",
-      //   dataIndex: "requested_amount",
-      //   key: "requested_amount",
-      //   filterKey: "requested_amount_contains",
-      //   // slots: {
-      //   //   filterIcon: "filterIcon",
-      //   //   filterDropdown: "filterDropdown",
-      //   // },
-      //   // sorter: true,
-      // },
-      // {
-      //   title: "Loan Payment Status",
-      //   dataIndex: "payment_status",
-      //   key: "payment_status",
-      //   //   filterKey: "payment_status_contains",
-      //   //   slots: {
-      //   //     filterIcon: "filterIcon",
-      //   //     filterDropdown: "filterDropdown",
-      //   //   },
-      //   //   sorter: true,
-      // },
-      // {
-      //   title: "Agrodealer Code",
-      //   dataIndex: "agrodealer_code",
-      //   key: "agrodealer_code",
-      //   // filterKey: "agrodealer_code_contains",
-      //   // slots: {
-      //   //   filterIcon: "filterIcon",
-      //   //   filterDropdown: "filterDropdown",
-      //   // },
-      //   // sorter: true,
-      // },
       {
         title: "Action",
         key: "action",
@@ -202,8 +170,55 @@ export default defineComponent({
       },
     ]);
 
+    const formVisible = ref<boolean>(false);
+
+    const isEditing = ref<boolean>(false);
+
+    const farmerLimitsForm = ref<InstanceType<typeof FarmerLimitsForm>>();
+
+    const createLimit = () => {
+      isEditing.value = false;
+      formVisible.value = true;
+    };
+
+    const editLimit = async (limit) => {
+      await setFarmerLimit(limit);
+      isEditing.value = true;
+      formVisible.value = true;
+      console.log(limit, "editing");
+    };
+
+    const removeLimit = async (limit) => {
+      await deleteFarmerLimits(limit.id);
+    };
+
+    const closeDrawer = () => {
+      formVisible.value = false;
+      isEditing.value = false;
+      farmerLimitsForm.value?.reset();
+    };
+
+    const onSubmit = async () => {
+      await fetchFarmerLimits();
+    };
+
+    const afterVisibleChange = async (status: boolean) => {
+      if (!status) {
+        farmerLimitsForm.value?.reset();
+        isEditing.value = false;
+        await setFarmerLimit({});
+      }
+    };
     return {
       columns,
+      isEditing,
+      formVisible,
+      createLimit,
+      onSubmit,
+      closeDrawer,
+      afterVisibleChange,
+      editLimit,
+      removeLimit,
     };
   },
 });
