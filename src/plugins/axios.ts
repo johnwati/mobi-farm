@@ -6,18 +6,28 @@ import router from "@/router";
 
 const $http = {
   Authentication: axios.create({
-    baseURL: import.meta.env.VITE_VUE_APP_API_BASE_URL,
-    // headers: {
-    //   // "Access-Control-Allow-Origin": "*",
-    //   accept: "*/*",
-    //   "Content-Type": "application/json",
-    // },
+    baseURL: import.meta.env.VITE_VUE_APP_API_BASE_URL + "/api/v1",
   }),
 
   Api: axios.create({
+    baseURL: import.meta.env.VITE_VUE_APP_API_BASE_URL + "/api/v1",
+    headers: {
+      accept: "*/*",
+      "Content-Type": "application/json",
+    },
+  }),
+
+  Api2: axios.create({
+    baseURL: import.meta.env.VITE_VUE_APP_API_BASE_URL + "/api",
+    headers: {
+      accept: "*/*",
+      "Content-Type": "application/json",
+    },
+  }),
+
+  Api3: axios.create({
     baseURL: import.meta.env.VITE_VUE_APP_API_BASE_URL,
     headers: {
-      // "Access-Control-Allow-Origin": "*",
       accept: "*/*",
       "Content-Type": "application/json",
     },
@@ -56,7 +66,7 @@ $http.Api.interceptors.response.use(
         message: "Error",
         description: error.response?.data?.error,
       });
-      router.push("/internal-server-error");
+      // router.push("/internal-server-error");
     }
     return Promise.reject(error);
   }
