@@ -10,9 +10,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-// import { useFarmers } from "@/composables";
 import DataGrid from "@/components/DataGrid.vue";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "PaymentsTable",

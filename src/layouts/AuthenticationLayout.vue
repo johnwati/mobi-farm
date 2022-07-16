@@ -20,13 +20,6 @@
         />
 
         <a-col :xs="24" :sm="24" :md="10" :lg="10" class="authentication-form">
-          <!-- <center>
-            <img
-              src="../assets/images/logo.png"
-              alt="eLimuBridge"
-              style="width: 128px"
-            />
-          </center> -->
           <div class="" style="max-width: 500px">
             <slot name="content" />
           </div>

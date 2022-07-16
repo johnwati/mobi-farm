@@ -63,9 +63,8 @@
   </a-spin>
 </template>
 <script lang="ts">
+import { useLoans } from "@/composables";
 import { defineComponent, onMounted, ref, watch } from "vue";
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
-import { useFarmers, useLoans } from "@/composables";
 
 export default defineComponent({
   name: "LoanStatusForm",

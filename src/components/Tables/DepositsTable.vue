@@ -9,11 +9,11 @@
   />
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from "vue";
-// import { useFarmers } from "@/composables";
-import DataGrid from "@/components/DataGrid.vue";
 import { useRoute } from "vue-router";
+
+import DataGrid from "../DataGrid.vue";
 
 export default defineComponent({
   name: "DepositsTable",
@@ -46,6 +46,7 @@ export default defineComponent({
 
   setup() {
     const route = useRoute();
+
     const columns = ref(
       route.name === "DepositsList"
         ? [
