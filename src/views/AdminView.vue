@@ -5,7 +5,7 @@
         <a-typography-link href="/dashboard"> Dashboard </a-typography-link>
       </a-breadcrumb-item>
 
-      <a-breadcrumb-item>{{ farmer.full_names }}</a-breadcrumb-item>
+      <a-breadcrumb-item>Administration</a-breadcrumb-item>
     </a-breadcrumb>
 
     <a-tabs v-model:activeKey="activeKey" class="tabs" type="card">
@@ -16,14 +16,14 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button type="primary" @click="formVisible = true">
+            <a-button type="primary" @click="openForm('limit', false)">
               <template #icon>
                 <PlusOutlined />
               </template>
 
               Add Limit
             </a-button>
-            <a-button type="primary" @click="formVisible = true">
+            <a-button type="primary" @click="openForm('upload', false)">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -34,12 +34,11 @@
         </a-page-header>
 
         <farmer-limits-table
-          label="deposits"
+          ref="limitsTable"
+          label="loan limits"
           :total="farmerLimitsCount"
           :data-source="farmerLimits"
           :loading="loading"
-          @edit="editFarmerLimits"
-          @remove="removeFarmerLimits"
         />
       </a-tab-pane>
       <a-tab-pane key="2" tab="Loan Products">
@@ -49,7 +48,11 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="formVisible = true">
+            <a-button
+              key="1"
+              type="primary"
+              @click="openForm('products', false)"
+            >
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -58,15 +61,14 @@
             </a-button>
           </template>
         </a-page-header>
-        <!-- <DataGrid
-          label="farmer"
-          :total="loanCount"
-          :data-source="farmerLoans"
-          :columns="columns"
+
+        <loan-products-table
+          ref="productsTable"
+          label="Loan Products"
+          :total="loanProductsCount"
+          :data-source="loanProducts"
           :loading="loading"
-          :rowExpandable="true"
-          rowKey="code"
-        /> -->
+        />
       </a-tab-pane>
       <a-tab-pane key="3" tab="AgroDealers">
         <a-page-header
@@ -75,7 +77,11 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="formVisible = true">
+            <a-button
+              key="1"
+              type="primary"
+              @click="openForm('agrodealers', false)"
+            >
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -84,17 +90,18 @@
             </a-button>
           </template>
         </a-page-header>
-        <!-- <deposits-table
+        <agro-dealers-table
+          ref="agrodealersTable"
           label="deposits"
-          :total="farmerDepositCount"
-          :data-source="farmerDeposits"
+          :total="agroDealersCount"
+          :data-source="agroDealers"
           :loading="loading"
-        /> -->
+        />
       </a-tab-pane>
       <a-tab-pane key="4" tab="Items">
         <a-page-header title="Items" :ghost="false" class="list-page-header">
           <template #extra>
-            <a-button key="1" type="primary" @click="formVisible = true">
+            <a-button key="1" type="primary" @click="openForm('items', false)">
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -103,12 +110,13 @@
             </a-button>
           </template>
         </a-page-header>
-        <!-- <payments-table
-          label="payments"
-          :total="farmerPaymentsCount"
-          :data-source="farmerLoanPayments"
+        <items-table
+          ref="itemsTable"
+          label="items"
+          :total="itemsCount"
+          :data-source="items"
           :loading="loading"
-        /> -->
+        />
       </a-tab-pane>
       <a-tab-pane key="5" tab="Currency Setup">
         <a-page-header
@@ -117,7 +125,11 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button key="1" type="primary" @click="formVisible = true">
+            <a-button
+              key="1"
+              type="primary"
+              @click="openForm('currency', false)"
+            >
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -126,17 +138,18 @@
             </a-button>
           </template>
         </a-page-header>
-        <!-- <payments-table
-          label="payments"
-          :total="farmerPaymentsCount"
-          :data-source="farmerLoanPayments"
+        <currencies-table
+          ref="currencyTable"
+          label="currencies"
+          :total="currenciesCount"
+          :data-source="currencies"
           :loading="loading"
-        /> -->
+        />
       </a-tab-pane>
     </a-tabs>
 
     <a-drawer
-      title="Farmer's Form"
+      title="Batch Import"
       placement="right"
       :closable="false"
       :mask-closable="false"
@@ -144,8 +157,8 @@
       v-model:visible="formVisible"
       @after-visible-change="afterVisibleChange"
     >
-      <currency-form
-        ref="currencyForm"
+      <import-farmer-limits
+        ref="limitsForm"
         :is-editing="true"
         @close-drawer="closeDrawer"
       />
@@ -154,37 +167,80 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import { PlusOutlined, UserOutlined, EditFilled } from "@ant-design/icons-vue";
-import { CurrencyForm } from "@/components/Forms";
-import FarmerLimitsTable from "@/components/Tables/FarmerLimitsTable.vue";
+import { ImportFarmerLimits } from "@/components/Forms";
+import {
+  AgroDealersTable,
+  CurrenciesTable,
+  FarmerLimitsTable,
+  ItemsTable,
+  LoanProductsTable,
+} from "@/components/Tables";
 import { useAdmin, useFarmers, useLoans } from "@/composables";
-import { useRoute, useRouter } from "vue-router";
+import { PlusOutlined } from "@ant-design/icons-vue";
+import { defineComponent, onMounted, ref } from "vue";
 export default defineComponent({
   name: "AdminView",
   components: {
     PlusOutlined,
-    UserOutlined,
-    EditFilled,
-    CurrencyForm,
     FarmerLimitsTable,
+    LoanProductsTable,
+    AgroDealersTable,
+    ItemsTable,
+    CurrenciesTable,
+    ImportFarmerLimits,
   },
   setup() {
-    const { loans, farmerLoans, loanCount, loanStatusList } = useLoans();
-    const { farmerLimits, farmerLimitsCount } = useAdmin();
+    const { loans, loanCount, loanStatusList } = useLoans();
+    const {
+      farmerLimits,
+      farmerLimitsCount,
+      loanProducts,
+      loanProductsCount,
+      agroDealers,
+      agroDealersCount,
+      items,
+      itemsCount,
+      currencies,
+      currenciesCount,
+      fetchFarmerLimits,
+      fetchLoanProducts,
+      fetchAgroDealers,
+      fetchItems,
+      fetchCurrencies,
+    } = useAdmin();
     const loading = ref<boolean>(false);
 
     const activeKey = ref("1");
-    const route = useRoute();
 
     const formVisible = ref<boolean>(false);
 
-    const currencyForm = ref<InstanceType<typeof CurrencyForm>>();
+    const currencyTable = ref<InstanceType<typeof CurrenciesTable>>();
+    const limitsTable = ref<InstanceType<typeof FarmerLimitsTable>>();
+    const agrodealersTable = ref<InstanceType<typeof AgroDealersTable>>();
+    const productsTable = ref<InstanceType<typeof LoanProductsTable>>();
+    const itemsTable = ref<InstanceType<typeof ItemsTable>>();
+    const limitsForm = ref<InstanceType<typeof ImportFarmerLimits>>();
+
+    const openForm = (form, editing) => {
+      console.log(editing);
+      if (form == "limit") {
+        limitsTable.value.createLimit();
+      } else if (form == "upload") {
+        importFarmerLimits();
+      } else if (form == "agrodealers") {
+        agrodealersTable.value.createDealer();
+      } else if (form == "products") {
+        productsTable.value.createProduct();
+      } else if (form == "items") {
+        itemsTable.value.createItem();
+      } else if (form == "currency") {
+        currencyTable.value.createCurrency();
+      }
+    };
 
     const {
       farmer,
       farmerAccountBalance,
-      fetchFarmer,
       farmerDeposits,
       farmerDepositCount,
       farmerLoanPayments,
@@ -193,7 +249,11 @@ export default defineComponent({
 
     onMounted(async () => {
       try {
-        // await fetchFarmer(route.params.farmerId);
+        await fetchFarmerLimits();
+        await fetchLoanProducts();
+        await fetchAgroDealers();
+        await fetchItems();
+        await fetchCurrencies();
       } catch (error) {
         console.error(error);
       }
@@ -201,7 +261,7 @@ export default defineComponent({
 
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
-        currencyForm.value?.reset();
+        // limitsForm.value?.reset();
       }
     };
 
@@ -209,22 +269,23 @@ export default defineComponent({
       formVisible.value = false;
     };
 
-    const editFarmerLimits = () => {
-      // formVisible.value = false;
-    };
-
-    const removeFarmerLimits = () => {
-      // formVisible.value = false;
+    const importFarmerLimits = () => {
+      formVisible.value = true;
     };
 
     return {
       loans,
-      farmerLoans,
       loanCount,
       loanStatusList,
       loading,
       formVisible,
       activeKey,
+      currencyTable,
+      limitsTable,
+      agrodealersTable,
+      productsTable,
+      itemsTable,
+      limitsForm,
       farmer,
       farmerDeposits,
       farmerDepositCount,
@@ -233,8 +294,15 @@ export default defineComponent({
       farmerAccountBalance,
       farmerLimits,
       farmerLimitsCount,
-      editFarmerLimits,
-      removeFarmerLimits,
+      loanProducts,
+      loanProductsCount,
+      agroDealers,
+      agroDealersCount,
+      items,
+      itemsCount,
+      currencies,
+      currenciesCount,
+      openForm,
       afterVisibleChange,
       closeDrawer,
     };
