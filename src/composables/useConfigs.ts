@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { useEnumStore } from "@/stores/enums";
 
 export default function useConfigs(): {
-  paymentMethods: ComputedRef<unknown>;
+  paymentMethods: ComputedRef<Record<string, unknown>[]>;
   itemCategories: ComputedRef<unknown>;
   itemUom: ComputedRef<unknown>;
   agrodealerCurrencies: ComputedRef<unknown>;

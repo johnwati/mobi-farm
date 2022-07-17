@@ -10,13 +10,27 @@ export const useSettingsStore = defineStore({
     loanProduct: {},
     loanProducts: {
       content: [],
+      total_elements: 0,
     },
     agroDealer: {},
-    agroDealers: {},
+    agroDealers: {
+      data: [],
+      page_details: {
+        total_elements: 0,
+      },
+    },
     currency: {},
-    currencies: {},
+    currencies: {
+      content: [],
+      total_elements: 0,
+    },
     item: {},
-    items: {},
+    items: {
+      content: [],
+      page_details: {
+        total_elements: 0,
+      },
+    },
   }),
   getters: {
     farmerLimitsCount: (state) => state.farmerLimits?.length || 0,

@@ -585,9 +585,9 @@ export default defineComponent({
           parseInt(route.params.farmerId as string)
         );
         console.log("mounting", farmer);
-        await fetchDeposits(data.farmer_code);
-        await fetchLoanPayments(data.farmer_code);
-        await fetchFarmerLoans(data.farmer_code);
+        await fetchDeposits(data.farmer_code as string);
+        await fetchLoanPayments(data.farmer_code as string);
+        await fetchFarmerLoans(data.farmer_code as string);
       } catch (error) {
         console.error(error);
       }

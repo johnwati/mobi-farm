@@ -50,7 +50,6 @@
 </template>
 <script lang="ts">
 import { useAdmin, useFarmers } from "@/composables";
-import type { SelectProps } from "ant-design-vue/lib/vc-select/Select";
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 
 interface Option {
@@ -58,6 +57,12 @@ interface Option {
   value: string;
   idNumber: string;
   code: string;
+}
+
+interface LoanProductOption {
+  label: string;
+  value: string;
+  type: string;
 }
 
 export default defineComponent({
@@ -88,11 +93,11 @@ export default defineComponent({
 
     const loanCategories = ref<string[]>(["LOAN", "INPUT"]);
 
-    const loanProductOptions = computed((): SelectProps["options"] =>
+    const loanProductOptions = computed((): LoanProductOption[] =>
       loanProducts.value.map((i) => ({
-        label: i.name,
-        value: i.code,
-        type: i.loan_type,
+        label: i.name as string,
+        value: i.code as string,
+        type: i.loan_type as string,
       }))
     );
 
@@ -125,10 +130,7 @@ export default defineComponent({
       max_amount: [{ required: true }],
     });
 
-    const onLoanProductSelect = (
-      string: string,
-      value: SelectProps["options"]
-    ) => {
+    const onLoanProductSelect = (string: string, value: LoanProductOption) => {
       console.log(value, "lonaproduct select");
       formState.value = {
         ...formState.value,

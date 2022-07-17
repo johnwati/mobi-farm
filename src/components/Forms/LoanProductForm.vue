@@ -137,7 +137,7 @@
         <a-input-number v-model:value="formState.max_concurrent_loans" />
       </a-form-item>
 
-      <a-form-item label="Loan Type" name="loan_type">
+      <!-- <a-form-item label="Loan Type" name="loan_type">
         <a-select v-model:value="formState.loan_type" style="width: 100%">
           <a-select-option
             v-for="(item, ind) in loanTypes"
@@ -147,7 +147,7 @@
             {{ item }}
           </a-select-option>
         </a-select>
-      </a-form-item>
+      </a-form-item> -->
 
       <a-form-item>
         <a-button type="primary" @click.prevent="submit">
@@ -160,11 +160,10 @@
   </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
-import type { IFarmer, IFarmerRegistration } from "@/interfaces/farmers";
-import { useAdmin, useFarmers, useLoans } from "@/composables";
+import { useAdmin, useLoans } from "@/composables";
 import useConfigs from "@/composables/useConfigs";
 import { useLoanProductStore } from "@/stores/loanProduct";
+import { defineComponent, onMounted, ref, watch } from "vue";
 
 export default defineComponent({
   name: "LoanProductForm",
@@ -207,8 +206,8 @@ export default defineComponent({
       min_guarantors: null,
       allow_concurrent_loans: true,
       max_concurrent_loans: null,
-      code: "",
-      loan_type: "",
+      // code: "",
+      // loan_type: "",
     });
 
     const rules = ref({
@@ -226,27 +225,27 @@ export default defineComponent({
           });
         } else {
           const state = formState.value;
-          const value = {
-            name: state.name,
-            min_amount: state.min_amount || 0,
-            max_amount: state.max_amount || 0,
-            repayment_method: state.repayment_method,
-            max_grace_period: state.max_grace_period || 0,
-            allow_concurrent_loans: state.allow_concurrent_loans,
-            max_concurrent_loans: state.max_concurrent_loans || 0,
-            loan_type: state.loan_type,
-            // loan_fees_data: [
-            //   {
-            //     product_code: "string",
-            //     duration: "Monthly",
-            //     loan_fee_type: "PERCENTAGE",
-            //     fee_name: "string",
-            //     rate: 0,
-            //     status: "ACTIVE",
-            //     charged_on: "Disbursement",
-            //   },
-            // ],
-          };
+          // const value = {
+          //   name: state.name,
+          //   min_amount: state.min_amount || 0,
+          //   max_amount: state.max_amount || 0,
+          //   repayment_method: state.repayment_method,
+          //   max_grace_period: state.max_grace_period || 0,
+          //   allow_concurrent_loans: state.allow_concurrent_loans,
+          //   max_concurrent_loans: state.max_concurrent_loans || 0,
+          //   loan_type: state.loan_type,
+          //   loan_fees_data: [
+          //     {
+          //       product_code: "string",
+          //       duration: "Monthly",
+          //       loan_fee_type: "PERCENTAGE",
+          //       fee_name: "string",
+          //       rate: 0,
+          //       status: "ACTIVE",
+          //       charged_on: "Disbursement",
+          //     },
+          //   ],
+          // };
           await createLoanProduct(state);
         }
         loanProductForm.value.resetFields();

@@ -9,4 +9,4 @@ import HighchartsVue from "highcharts-vue";
 
 const app = createApp(App);
 
-app.use(createPinia()).use(Antd).use(HighchartsVue).use(router).mount("#app");
+app.use(createPinia()).use(Antd).use(router).use(HighchartsVue).mount("#app");

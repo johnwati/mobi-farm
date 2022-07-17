@@ -4,10 +4,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "allowJs": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"]
     },
     "strict": false,
+    "lib": ["es2017"],
   },
 
   "references": [

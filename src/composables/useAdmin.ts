@@ -8,19 +8,19 @@ import { useFarmerLimitsStore } from "@/stores/farmersLimits";
 import { useLoanProductStore } from "@/stores/loanProduct";
 
 export default function useAdmin(): {
-  loanProduct: ComputedRef<Record<string, unknown>>;
+  loanProduct: ComputedRef;
   loanProducts: ComputedRef<Record<string, unknown>[]>;
   loanProductsCount: ComputedRef<number>;
   farmerLimit: ComputedRef;
   farmerLimits: ComputedRef<Record<string, unknown>[]>;
   farmerLimitsCount: ComputedRef<number>;
-  agroDealer: ComputedRef<Record<string, unknown>>;
+  agroDealer: ComputedRef;
   agroDealers: ComputedRef<Record<string, unknown>[]>;
   agroDealersCount: ComputedRef<number>;
   currency: ComputedRef;
   currencies: ComputedRef<Record<string, unknown>[]>;
   currenciesCount: ComputedRef<number>;
-  item: ComputedRef<Record<string, unknown>>;
+  item: ComputedRef;
   items: ComputedRef<Record<string, unknown>[]>;
   itemsCount: ComputedRef<number>;
   createFarmerLimit: (payload) => Promise<void>;

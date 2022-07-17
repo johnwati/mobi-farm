@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useTransactionStore } from "@/stores/transaction";
 
 export default function useDeposits(): {
-  deposits: ComputedRef<Record<string, unknown>>;
+  deposits: ComputedRef<Record<string, unknown>[]>;
   // deposits: ComputedRef<unknown>;
   depositsCount: ComputedRef<number>;
   fetchDeposits: () => Promise<void>;

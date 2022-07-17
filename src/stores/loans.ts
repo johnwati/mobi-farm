@@ -5,7 +5,12 @@ import { defineStore } from "pinia";
 export const useLoansStore = defineStore({
   id: "loans",
   state: () => ({
-    loans: {},
+    loans: {
+      data: [],
+      page_details: {
+        total_elements: 0,
+      },
+    },
     loan: {},
     loanStatusEnum: {},
     loansByStatus: {},

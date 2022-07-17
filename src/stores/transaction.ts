@@ -5,7 +5,10 @@ import { defineStore } from "pinia";
 export const useTransactionStore = defineStore({
   id: "transactions",
   state: () => ({
-    deposits: {},
+    deposits: {
+      content: [],
+      total_elements: 0,
+    },
     transactions: [],
     transaction: {},
     isLoading: false,

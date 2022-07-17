@@ -1,8 +1,4 @@
-import type {
-  IFarmer,
-  IFarmerDGResponse,
-  IFarmerRegistration,
-} from "@/interfaces/farmers";
+import type { IFarmerRegistration } from "@/interfaces/farmers";
 import $http from "@/plugins/axios";
 import type { AxiosError } from "axios";
 import { defineStore } from "pinia";
@@ -12,9 +8,20 @@ export const useFarmersStore = defineStore({
   state: () => ({
     farmers: [],
     farmer: {},
-    farmerLoans: {},
-    farmerDeposits: {},
-    farmerLoanPayments: {},
+    farmerLoans: {
+      data: [],
+      page_details: {
+        total_elements: 0,
+      },
+    },
+    farmerDeposits: {
+      content: [],
+      total_elements: 0,
+    },
+    farmerLoanPayments: {
+      content: [],
+      total_elements: 0,
+    },
     farmerAccount: {},
     farmerAccountBalance: 10000,
     isLoading: false,
@@ -24,7 +31,8 @@ export const useFarmersStore = defineStore({
     getFarmerCount: (state) => state.farmers.length,
     getFarmerAccountBalance: (state) => state.farmerAccountBalance,
     getFarmerLoans: (state) => state.farmerLoans?.data,
-    getFarmerLoansCount: (state) => state.farmerLoans?.page_details?.total_elements,
+    getFarmerLoansCount: (state) =>
+      state.farmerLoans?.page_details?.total_elements,
     getFarmerDeposits: (state) => state.farmerDeposits?.content,
     getFarmerDepositCount: (state) => state.farmerDeposits?.total_elements,
     getFarmerLoanPayments: (state) => state.farmerLoanPayments?.content,

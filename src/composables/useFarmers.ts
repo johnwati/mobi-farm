@@ -17,10 +17,10 @@ export default function useFarmers(): {
   farmerLoans: ComputedRef<Record<string, unknown>[]>;
   farmerLoansCount: ComputedRef<number>;
   fetchFarmers: () => Promise<void>;
-  fetchFarmer: (id: number) => Promise<string>;
+  fetchFarmer: (id: number) => Promise<Record<string, unknown>>;
   fetchFarmerLoans: (code: string) => Promise<void>;
-  fetchLoanPayments: (id: number) => Promise<void>;
-  fetchDeposits: (id: number) => Promise<void>;
+  fetchLoanPayments: (id: string) => Promise<void>;
+  fetchDeposits: (id: string) => Promise<void>;
   updateFarmer: (payload: Record<string, unknown>) => Promise<void>;
   createFarmer: (payload) => Promise<void>;
   setFarmer: (payload) => Promise<void>;
@@ -88,7 +88,7 @@ export default function useFarmers(): {
     }
   }
 
-  async function fetchFarmer(id: number): Promise<string> {
+  async function fetchFarmer(id: number): Promise<Record<string, unknown>> {
     try {
       return await store.fetchFarmer(id);
     } catch (error) {
