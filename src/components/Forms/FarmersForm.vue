@@ -23,13 +23,13 @@
       </a-row>
 
       <a-form-item label="ID Number" name="id_no">
-        <a-input v-model:value="formState.id_number" type="text" />
+        <a-input v-model:value="formState.id_number" />
       </a-form-item>
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="12">
           <a-form-item label="Phone Number" name="phone_number">
-            <a-input-number
+            <a-input
               v-model:value="formState.phone_number"
               style="width: 100%"
             />

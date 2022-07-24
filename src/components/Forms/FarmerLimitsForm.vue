@@ -45,11 +45,23 @@
         </a-form-item>
       </template>
 
-      <a-form-item label="Min. Amount" name="min_amount">
+      <a-form-item
+        label="Min. Amount"
+        name="min_amount"
+        :help="
+          range.length > 0 ? 'Ksh ' + range[0] + ' to Ksh ' + range[1] : ''
+        "
+      >
         <a-input-number v-model:value="formState.min_amount" />
       </a-form-item>
 
-      <a-form-item label="Max. Amount" name="max_amount">
+      <a-form-item
+        label="Max. Amount"
+        name="max_amount"
+        :help="
+          range.length > 0 ? 'Ksh ' + range[0] + ' to Ksh ' + range[1] : ''
+        "
+      >
         <a-input-number v-model:value="formState.max_amount" />
       </a-form-item>
 
@@ -65,7 +77,7 @@
 </template>
 <script lang="ts">
 import { useAdmin, useFarmers } from "@/composables";
-import type { SelectProps } from "ant-design-vue/lib/vc-select/Select";
+import type { Rule } from "ant-design-vue/lib/form";
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 
 interface Option {
@@ -79,6 +91,8 @@ interface LoanProductOption {
   label: string;
   value: string;
   type: string;
+  min: number;
+  max: number;
 }
 
 export default defineComponent({
@@ -107,6 +121,8 @@ export default defineComponent({
 
     const loading = ref<boolean>(false);
 
+    const range = ref([]);
+
     const loanCategories = ref<string[]>(["LOAN", "INPUT"]);
 
     const loanProductOptions = computed((): LoanProductOption[] =>
@@ -114,6 +130,8 @@ export default defineComponent({
         label: i.name as string,
         value: i.code as string,
         type: i.loan_type as string,
+        min: i.min_amount as number,
+        max: i.max_amount as number,
       }))
     );
 
@@ -141,13 +159,12 @@ export default defineComponent({
       max_amount: null,
     });
 
-    const rules = ref({
+    const rules = ref<Record<string, Rule[]>>({
       min_amount: [{ required: true }],
       max_amount: [{ required: true }],
     });
 
     const onFarmerSelect = (string: string, value: Option) => {
-      console.log(value);
       formState.value = {
         ...formState.value,
         farmer_id: value.id,
@@ -163,6 +180,26 @@ export default defineComponent({
         loan_product_name: value.label,
         loan_product_code: value.value,
         category: value.type,
+      };
+      range.value = [value.min, value.max];
+      rules.value = {
+        ...rules.value,
+        min_amount: [
+          {
+            type: "number",
+            required: true,
+            min: value.min,
+            max: value.max,
+          },
+        ],
+        max_amount: [
+          {
+            type: "number",
+            required: true,
+            min: value.min,
+            max: value.max,
+          },
+        ],
       };
     };
 
@@ -277,6 +314,7 @@ export default defineComponent({
       loanProductOptions,
       farmerOptions,
       loanCategories,
+      range,
       onFarmerSelect,
       onLoanProductSelect,
       filterOption,

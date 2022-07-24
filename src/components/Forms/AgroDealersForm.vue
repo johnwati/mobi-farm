@@ -34,10 +34,6 @@
         <a-input v-model:value="formState.website" type="text" />
       </a-form-item>
 
-      <a-form-item label="Payment Terms" name="payment_terms_id">
-        <a-input v-model:value="formState.payment_terms_id" type="text" />
-      </a-form-item>
-
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="12">
           <a-form-item label="Account Name" name="accountName">
@@ -73,6 +69,10 @@
 
       <a-form-item label="Country" name="country">
         <a-input v-model:value="formState.country" type="text" />
+      </a-form-item>
+
+      <a-form-item label="County" name="county">
+        <a-input v-model:value="formState.county" type="text" />
       </a-form-item>
 
       <a-form-item label="Address" name="address">
@@ -130,7 +130,6 @@ export default defineComponent({
       legal_name: "",
       tax_number: "",
       website: "",
-      payment_terms_id: 0,
       bank: {
         account_name: "",
         account_number: "",
@@ -139,18 +138,18 @@ export default defineComponent({
         swift_number: "",
       },
       active: true,
+      county: "",
       country: "",
       address: "",
       email: "",
       phone: "",
-      status: "",
+      status: "ACTIVE",
       notes: "",
-      account_code: "",
+      account_code: null,
     });
 
     const rules = ref({
-      min_amount: [{ required: true }],
-      max_amount: [{ required: true }],
+      name: [{ required: true }],
     });
 
     const submit = async () => {
@@ -207,7 +206,6 @@ export default defineComponent({
               legal_name: agroDealer.value.legal_name,
               tax_number: agroDealer.value.tax_number,
               website: agroDealer.value.website,
-              payment_terms_id: agroDealer.value.payment_terms?.id,
               bank: {
                 account_name: agroDealer.value.bank_account?.account_name,
                 account_number: agroDealer.value.bank_account?.account_number,
@@ -216,13 +214,14 @@ export default defineComponent({
                 swift_number: agroDealer.value.bank_account?.swift_number,
               },
               active: agroDealer.value.active,
+              county: agroDealer.value.county,
               country: agroDealer.value.country,
               address: agroDealer.value.address,
               email: agroDealer.value.email,
               phone: agroDealer.value.phone_number,
               status: agroDealer.value.status,
               notes: agroDealer.value.notes,
-              account_code: agroDealer.value.account.account_code,
+              account_code: agroDealer.value.account?.account_code || null,
             };
           } else {
             formState.value = {
@@ -231,7 +230,6 @@ export default defineComponent({
               legal_name: "",
               tax_number: "",
               website: "",
-              payment_terms_id: 0,
               bank: {
                 account_name: "",
                 account_number: "",
@@ -240,13 +238,14 @@ export default defineComponent({
                 swift_number: "",
               },
               active: true,
+              county: "",
               country: "",
               address: "",
               email: "",
               phone: "",
-              status: "",
+              status: "ACTIVE",
               notes: "",
-              account_code: "",
+              account_code: null,
             };
           }
         } catch (error) {

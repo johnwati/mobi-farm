@@ -12,26 +12,6 @@
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="12">
-          <a-form-item
-            label="Min. Payment Duration"
-            name="min_payment_duration"
-          >
-            <a-input-number v-model:value="formState.min_payment_duration" />
-          </a-form-item>
-        </a-col>
-
-        <a-col class="gutter-row" :span="12">
-          <a-form-item
-            label="Max. Payment Duration"
-            name="max_payment_duration"
-          >
-            <a-input-number v-model:value="formState.max_payment_duration" />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="12">
           <a-form-item label="Min. Amount" name="min_amount">
             <a-input-number v-model:value="formState.min_amount" />
           </a-form-item>
@@ -43,24 +23,6 @@
           </a-form-item>
         </a-col>
       </a-row>
-
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="Interest" name="interest">
-            <a-input-number v-model:value="formState.interest" />
-          </a-form-item>
-        </a-col>
-
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="Service Fee" name="service_fee">
-            <a-input-number v-model:value="formState.service_fee" />
-          </a-form-item>
-        </a-col>
-      </a-row>
-
-      <a-form-item label="Processing Insurance" name="processing_insurance">
-        <a-input-number v-model:value="formState.processing_insurance" />
-      </a-form-item>
 
       <a-form-item label="Repayment Method" name="repayment_method">
         <a-select
@@ -78,49 +40,13 @@
         </a-select>
       </a-form-item>
 
-      <a-form-item label="Has Penalty" name="has_penalty">
-        <a-switch v-model:checked="formState.interest" />
-      </a-form-item>
-
-      <template v-if="formState.interest">
-        <a-row :gutter="16">
-          <a-col class="gutter-row" :span="12">
-            <a-form-item label="Penalty Rate Type" name="penalty_rate_type">
-              <a-input
-                v-model:value="formState.penalty_rate_type"
-                type="text"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col class="gutter-row" :span="12">
-            <a-form-item label="Penalty Rate" name="penalty_rate">
-              <a-input-number v-model:value="formState.penalty_rate" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-
-        <a-row :gutter="16">
-          <a-col class="gutter-row" :span="12">
-            <a-form-item label="Max Grace Period" name="max_grace_period">
-              <a-input-number v-model:value="formState.max_grace_period" />
-            </a-form-item>
-          </a-col>
-
-          <a-col class="gutter-row" :span="12">
-            <a-form-item
-              label="Penalty Grace Period"
-              name="penalty_grace_period"
-            >
-              <a-input-number v-model:value="formState.penalty_grace_period" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </template>
-
-      <a-form-item label="Min. Guarantors" name="min_guarantors">
-        <a-input-number v-model:value="formState.min_guarantors" />
-      </a-form-item>
+      <a-row :gutter="16">
+        <a-col class="gutter-row" :span="12">
+          <a-form-item label="Max Grace Period" name="max_grace_period">
+            <a-input-number v-model:value="formState.max_grace_period" />
+          </a-form-item>
+        </a-col>
+      </a-row>
 
       <a-form-item
         label="Allow Concurrrent Loans"
@@ -137,7 +63,7 @@
         <a-input-number v-model:value="formState.max_concurrent_loans" />
       </a-form-item>
 
-      <!-- <a-form-item label="Loan Type" name="loan_type">
+      <a-form-item label="Loan Type" name="loan_type">
         <a-select v-model:value="formState.loan_type" style="width: 100%">
           <a-select-option
             v-for="(item, ind) in loanTypes"
@@ -147,7 +73,7 @@
             {{ item }}
           </a-select-option>
         </a-select>
-      </a-form-item> -->
+      </a-form-item>
 
       <a-form-item>
         <a-button type="primary" @click.prevent="submit">
@@ -190,24 +116,14 @@ export default defineComponent({
 
     const formState = ref({
       name: "",
-      min_payment_duration: 1,
-      max_payment_duration: 1,
       min_amount: null,
       max_amount: null,
-      interest: null,
-      service_fee: null,
-      processing_insurance: null,
-      repayment_method: "",
-      has_penalty: true,
-      penalty_rate_type: "",
-      penalty_rate: null,
+      repayment_method: "PARTIAL_PAYMENT",
       max_grace_period: null,
-      penalty_grace_period: null,
-      min_guarantors: null,
       allow_concurrent_loans: true,
       max_concurrent_loans: null,
-      // code: "",
-      // loan_type: "",
+      loan_type: "LOAN",
+      loan_fees_data: [],
     });
 
     const rules = ref({
@@ -290,30 +206,28 @@ export default defineComponent({
           if (currentValue) {
             formState.value = {
               name: loanProduct.value.name,
-              min_payment_duration:
-                loanProduct.value?.min_payment_duration || null,
-              max_payment_duration:
-                loanProduct.value?.max_payment_duration || null,
               min_amount: loanProduct.value?.min_amount || null,
               max_amount: loanProduct.value?.max_amount || null,
-              interest: loanProduct.value?.interest || null,
-              service_fee: loanProduct.value?.service_fee || null,
-              processing_insurance:
-                loanProduct.value?.processing_insurance || null,
               repayment_method: loanProduct.value?.repayment_method || null,
-              has_penalty: loanProduct.value?.has_penalty || null,
-              penalty_rate_type: loanProduct.value?.penalty_rate_type || null,
-              penalty_rate: loanProduct.value?.penalty_rate || null,
               max_grace_period: loanProduct.value?.max_grace_period || null,
-              penalty_grace_period:
-                loanProduct.value?.penalty_grace_period || null,
-              min_guarantors: loanProduct.value?.min_guarantors || null,
               allow_concurrent_loans:
                 loanProduct.value?.allow_concurrent_loans || null,
               max_concurrent_loans:
                 loanProduct.value?.max_concurrent_loans || null,
-              // code: loanProduct.value.code,
-              // loan_type: loanProduct.value.loan_type,
+              loan_type: loanProduct.value.loan_type,
+              loan_fees_data: loanProduct.value.loan_fees_data,
+            };
+          } else {
+            formState.value = {
+              name: "",
+              min_amount: null,
+              max_amount: null,
+              repayment_method: "PARTIAL_PAYMENT",
+              max_grace_period: null,
+              allow_concurrent_loans: true,
+              max_concurrent_loans: null,
+              loan_type: "LOAN",
+              loan_fees_data: [],
             };
           }
         } catch (error) {
@@ -323,26 +237,6 @@ export default defineComponent({
         }
       },
       { immediate: true, deep: true }
-    );
-
-    watch(
-      () => formState.value.has_penalty,
-      async (value) => {
-        loading.value = true;
-        try {
-          if (value === false) {
-            formState.value.penalty_rate = "";
-            formState.value.penalty_rate_type = "";
-            formState.value.penalty_grace_period = "";
-            formState.value.max_grace_period = "";
-          }
-        } catch (error) {
-          console.error(error);
-        } finally {
-          loading.value = false;
-        }
-      },
-      { immediate: false, deep: true }
     );
 
     return {

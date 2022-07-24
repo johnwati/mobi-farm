@@ -8,6 +8,8 @@ import FarmerLimitForm from "./FarmerLimitForm.vue";
 import AgroDealersForm from "./AgroDealersForm.vue";
 import ItemsForm from "./ItemsForm.vue";
 import ImportFarmerLimits from "./ImportFarmerLimits.vue";
+import LoanFeesForm from "./LoanFeesForm.vue";
+import TenureForm from "./TenureForm.vue";
 
 export {
   FarmersForm,
@@ -20,4 +22,6 @@ export {
   AgroDealersForm,
   ItemsForm,
   ImportFarmerLimits,
+  LoanFeesForm,
+  TenureForm,
 };
