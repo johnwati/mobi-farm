@@ -12,7 +12,9 @@
 
     <a-tabs v-model:activeKey="activeKey" class="tabs" type="card">
       <a-tab-pane key="1" tab="Profile" class="tab_body">
+        <a-skeleton v-if="loading" avatar :paragraph="{ rows: 8 }" />
         <a-row
+          v-else
           type="flex"
           :gutter="[0, 12]"
           justify="flex-start"
@@ -35,8 +37,8 @@
                         xs: 24,
                         sm: 32,
                         md: 40,
-                        lg: 64,
-                        xl: 80,
+                        lg: 100,
+                        xl: 100,
                         xxl: 100,
                       }"
                     >
@@ -45,16 +47,29 @@
                       </template>
                     </a-avatar>
                   </a-col>
-                  <a-col style="padding: 10px">
+                  <a-col style="padding: 0 10px">
                     <a-typography-title :level="4">
-                      {{ farmer.fname + " " + farmer.lname }}
+                      {{ farmer.full_names }}
                     </a-typography-title>
-                    <a-typography-text type="secondary">{{
-                      farmer.phone_number
-                    }}</a-typography-text>
+                    <a-space direction="vertical">
+                      <a-badge v-if="farmer.email_verified" text="verified">
+                        <a-typography-text type="secondary">
+                          {{ farmer.email }}
+                        </a-typography-text>
+                      </a-badge>
+                      <a-typography-text v-else type="secondary">
+                        {{ farmer.email }}
+                      </a-typography-text>
+                      <a-typography-text type="secondary">
+                        {{ farmer.phone_number }}
+                      </a-typography-text>
+                    </a-space>
                   </a-col>
-                  <a-col v-if="farmer.new" style="padding: 10px">
+                  <a-col v-if="farmer.new" style="padding: 0px">
                     <a-tag color="#87d068">NEW</a-tag>
+                  </a-col>
+                  <a-col v-if="farmer.status" style="padding: 0px">
+                    <a-tag color="#ff6700">{{ farmer.status }}</a-tag>
                   </a-col>
                 </a-row>
                 <a-col style="padding: 10px">
@@ -107,22 +122,11 @@
                 <a-col :span="8">
                   <a-card>
                     <a-statistic
-                      title="Deposit Balance"
+                      title="Wallet Balance"
                       :precision="2"
                       prefix="KShs. "
                       :value-style="{ fontWeight: 'bold' }"
-                      :value="farmer.loan_limit"
-                    />
-                  </a-card>
-                </a-col>
-                <a-col :span="8">
-                  <a-card>
-                    <a-statistic
-                      title="Loan Limit"
-                      :precision="2"
-                      prefix="KShs. "
-                      :value-style="{ fontWeight: 'bold' }"
-                      :value="farmer.loan_limit || 0"
+                      :value="farmer.emoney?.current_balance"
                     />
                   </a-card>
                 </a-col>
@@ -137,43 +141,105 @@
                     />
                   </a-card>
                 </a-col>
+                <a-col :span="8">
+                  <a-card>
+                    <a-statistic
+                      title="Number of Loans"
+                      :precision="0"
+                      :value-style="{ fontWeight: 'bold' }"
+                      :value="farmerLoansCount || 0"
+                    />
+                  </a-card>
+                </a-col>
               </a-row>
               <a-col :span="16">
-                <a-descriptions
-                  :column="2"
-                  :contentStyle="{
-                    alignText: 'right',
-                    fontWeight: 'normal',
-                    color: '#36454F',
-                  }"
-                  :labelStyle="{
-                    fontWeight: 'bold',
-                  }"
+                <a-row
+                  type="flex"
+                  align="top"
+                  :gutter="[24, 10]"
+                  style="width: 100%; margin: 0 0 20px"
                 >
-                  <template #title>
+                  <a-col :span="24">
                     <a-typography-title :level="4">
                       Farmer Details
                     </a-typography-title>
-                  </template>
-                  <a-descriptions-item label="Farmer Code">
-                    {{ farmer.farmer_code }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label="Status">
-                    {{ farmer.status }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label="Value Chain">
-                    {{ farmer.value_chaim }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label="Farm Size">
-                    {{ farmer.farm_size }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label="County">
-                    {{ farmer.county }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label="Ward">
-                    {{ farmer.ward }}
-                  </a-descriptions-item>
-                </a-descriptions>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-descriptions
+                      :column="1"
+                      :contentStyle="{
+                        alignText: 'right',
+                        fontWeight: 'normal',
+                        color: '#36454F',
+                      }"
+                      :labelStyle="{
+                        fontWeight: 'bold',
+                      }"
+                    >
+                      <!-- <template #title>
+                        <a-typography-title :level="4">
+                          Farmer Details
+                        </a-typography-title>
+                      </template> -->
+                      <a-descriptions-item label="Farmer Code">
+                        {{ farmer.farmer_code || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="ID Number">
+                        {{ farmer.id_no || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Gender">
+                        {{ farmer.gender || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Marital Status">
+                        {{ farmer.marital_status || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Next of Kin">
+                        {{ farmer.next_of_kin_email || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Next of Kin Email">
+                        {{ farmer.next_of_kin_email || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Sales Agent Code">
+                        {{ farmer.sale_agent_code || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Other source of income">
+                        {{ farmer.other_source_od_income || "-" }}
+                      </a-descriptions-item>
+                    </a-descriptions>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-descriptions
+                      :column="1"
+                      :contentStyle="{
+                        alignText: 'right',
+                        fontWeight: 'normal',
+                        color: '#36454F',
+                      }"
+                      :labelStyle="{
+                        fontWeight: 'bold',
+                      }"
+                    >
+                      <a-descriptions-item label="Farm Size">
+                        {{ farmer.farm_size || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Region">
+                        {{ farmer.region || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="County">
+                        {{ farmer.county || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Ward">
+                        {{ farmer.ward || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Soil Types">
+                        {{ farmer.soil_types || "-" }}
+                      </a-descriptions-item>
+                      <a-descriptions-item label="Value Chain">
+                        {{ farmer.value_chaim || "-" }}
+                      </a-descriptions-item>
+                    </a-descriptions>
+                  </a-col>
+                </a-row>
               </a-col>
               <a-col :span="8">
                 <a-card class="financials_tab">
@@ -195,13 +261,13 @@
                       </a-typography-title>
                     </template>
                     <a-descriptions-item label="Payment Method">
-                      {{ farmer.payment_method }}
+                      {{ farmer.payment_method || "-" }}
                     </a-descriptions-item>
                     <a-descriptions-item label="Account Number">
-                      {{ farmer.account_number }}
+                      {{ farmer.account_number || "-" }}
                     </a-descriptions-item>
                     <a-descriptions-item label="Account Name">
-                      {{ farmer.account_name }}
+                      {{ farmer.account_name || "-" }}
                     </a-descriptions-item>
                   </a-descriptions>
                 </a-card>
@@ -214,6 +280,7 @@
                     alignText: 'right',
                     fontWeight: 'normal',
                     color: '#36454F',
+                    alignItems: 'center',
                   }"
                   :labelStyle="{
                     fontWeight: 'bold',
@@ -224,23 +291,53 @@
                       Validation
                     </a-typography-title>
                   </template>
-                  <a-descriptions-item label="Email Validation">
-                    {{ farmer.email_validation }}
+                  <a-descriptions-item label="Email">
+                    <template v-if="farmer.email_verified">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
-                  <a-descriptions-item label="CRB Validation">
-                    {{ farmer.crb_validation }}
+                  <a-descriptions-item label="CRB">
+                    <template v-if="farmer.crb_validation">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
-                  <a-descriptions-item label="Phone Number Validation">
-                    {{ farmer.phone_number_validation }}
+                  <a-descriptions-item label="Phone Number">
+                    <template v-if="farmer.phone_number_validation">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
-                  <a-descriptions-item label="Phone No. Ownership Validation">
-                    {{ farmer.phone_number_ownership_validation }}
+                  <a-descriptions-item label="Phone No. Ownership">
+                    <template v-if="farmer.phone_number_ownership_validation">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
-                  <a-descriptions-item label="IPRS Validation">
-                    {{ farmer.iprs_validation }}
+                  <a-descriptions-item label="IPRS">
+                    <template v-if="farmer.iprs_validation">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
-                  <a-descriptions-item label="IMSI Validation">
-                    {{ farmer.imsi_validation }}
+                  <a-descriptions-item label="IMSI">
+                    <template v-if="farmer.imsi_validation">
+                      <check-outlined style="color: green" />
+                    </template>
+                    <template v-else>
+                      <close-outlined style="color: red" />
+                    </template>
                   </a-descriptions-item>
                 </a-descriptions>
               </a-col>
@@ -267,7 +364,17 @@
           rowKey="code"
         />
       </a-tab-pane>
-      <a-tab-pane key="3" tab="Deposits">
+      <a-tab-pane key="3" tab="Loan Limits">
+        <farmer-limits-table
+          ref="limitsTable"
+          label="loan limits"
+          :total="farmerLimitsCount"
+          :data-source="farmerLimits"
+          :loading="loading"
+          @load-data="fetchLimits"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="4" tab="Wallet Transactions">
         <deposits-table
           label="deposits"
           :total="farmerDepositCount"
@@ -275,14 +382,14 @@
           :loading="loading"
         />
       </a-tab-pane>
-      <a-tab-pane key="4" tab="Payments">
+      <!-- <a-tab-pane key="5" tab="Payments">
         <payments-table
           label="payments"
           :total="farmerPaymentsCount"
           :data-source="farmerLoanPayments"
           :loading="loading"
         />
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
 
     <a-drawer
@@ -330,9 +437,14 @@
 import DataGrid from "@/components/DataGrid.vue";
 import { FarmerLimitForm, FarmersForm } from "@/components/Forms";
 import DepositsTable from "@/components/Tables/DepositsTable.vue";
-import PaymentsTable from "@/components/Tables/PaymentsTable.vue";
+import FarmerLimitsTable from "@/components/Tables/FarmerLimitsTable.vue";
 import { useFarmers, useLoans } from "@/composables";
-import { EditFilled, UserOutlined } from "@ant-design/icons-vue";
+import {
+  EditFilled,
+  UserOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons-vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -344,11 +456,32 @@ export default defineComponent({
     EditFilled,
     FarmersForm,
     DepositsTable,
-    PaymentsTable,
     FarmerLimitForm,
+    FarmerLimitsTable,
+    CheckOutlined,
+    CloseOutlined,
   },
   setup() {
     const { loans, loanCount, loanStatusList } = useLoans();
+
+    const {
+      farmer,
+      farmerAccountBalance,
+      farmerLoans,
+      farmerLoansCount,
+      farmerDeposits,
+      farmerDepositCount,
+      farmerLoanPayments,
+      farmerPaymentsCount,
+      farmerLimits,
+      farmerLimitsCount,
+      fetchFarmer,
+      fetchLoanPayments,
+      fetchDeposits,
+      fetchFarmerLoans,
+      fetchFarmerLoanLimits,
+    } = useFarmers();
+
     const loading = ref<boolean>(false);
 
     const activeKey = ref("1");
@@ -564,32 +697,21 @@ export default defineComponent({
       // },
     ]);
 
-    const {
-      farmer,
-      farmerAccountBalance,
-      fetchFarmer,
-      fetchLoanPayments,
-      fetchDeposits,
-      farmerLoans,
-      farmerLoansCount,
-      farmerDeposits,
-      farmerDepositCount,
-      farmerLoanPayments,
-      farmerPaymentsCount,
-      fetchFarmerLoans,
-    } = useFarmers();
-
     onMounted(async () => {
+      loading.value = true;
       try {
         const data = await fetchFarmer(
           parseInt(route.params.farmerId as string)
         );
         console.log("mounting", farmer);
-        await fetchDeposits(data.farmer_code as string);
-        await fetchLoanPayments(data.farmer_code as string);
+        await fetchDeposits(data.id as number);
+        await fetchLoanPayments(data.id as number);
+        await fetchFarmerLoanLimits(data.id as number);
         await fetchFarmerLoans(data.farmer_code as string);
       } catch (error) {
         console.error(error);
+      } finally {
+        loading.value = false;
       }
     });
 
@@ -608,7 +730,19 @@ export default defineComponent({
       formType.value = type;
     };
 
+    const fetchLimits = async () => {
+      loading.value = true;
+      try {
+        await fetchFarmerLoanLimits(parseInt(route.params.farmerId as string));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
     return {
+      fetchLimits,
       formType,
       loans,
       farmerLoans,
@@ -625,6 +759,9 @@ export default defineComponent({
       farmerLoanPayments,
       farmerPaymentsCount,
       farmerAccountBalance,
+      farmerLimits,
+      farmerLimitsCount,
+      fetchFarmerLoanLimits,
       afterVisibleChange,
       openEditForm,
       closeDrawer,

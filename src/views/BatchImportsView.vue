@@ -155,14 +155,24 @@ export default defineComponent({
       }, 0);
     };
 
-    const uploadFiles = () => {
+    const getFile = async (file) => {
+      const reader = new FileReader();
+      return new Promise((resolve) => {
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    };
+
+    const uploadFiles = async () => {
       console.log(fileList.value);
-      fileList.value.forEach((file) => {
-        // const dataStream = fs.readFileSync(`Your Path to file/File Name`, null);
-        console.log(file);
-        batchImportData({
+
+      Promise.all(
+        fileList.value.map((file) => getFile(file.originFileObj))
+      ).then(async (data) => {
+        console.log(data, "item");
+        await batchImportData({
           fileType: formState.value.fileType,
-          file: file,
+          file: data,
         });
       });
     };

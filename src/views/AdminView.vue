@@ -39,6 +39,7 @@
           :total="farmerLimitsCount"
           :data-source="farmerLimits"
           :loading="loading"
+          @load-data="fetchFarmerLimits"
         />
       </a-tab-pane>
       <a-tab-pane key="2" tab="Loan Products">
@@ -68,6 +69,7 @@
           :total="loanProductsCount"
           :data-source="loanProducts"
           :loading="loading"
+          @load-data="fetchLoanProducts"
         />
       </a-tab-pane>
       <a-tab-pane key="3" tab="AgroDealers">
@@ -96,9 +98,10 @@
           :total="agroDealersCount"
           :data-source="agroDealers"
           :loading="loading"
+          @load-data="fetchAgroDealers"
         />
       </a-tab-pane>
-      <a-tab-pane key="4" tab="Items">
+      <!-- <a-tab-pane key="4" tab="Items">
         <a-page-header title="Items" :ghost="false" class="list-page-header">
           <template #extra>
             <a-button key="1" type="primary" @click="openForm('items', false)">
@@ -117,8 +120,8 @@
           :data-source="items"
           :loading="loading"
         />
-      </a-tab-pane>
-      <a-tab-pane key="5" tab="Currency Setup">
+      </a-tab-pane> -->
+      <a-tab-pane key="4" tab="Currency Setup">
         <a-page-header
           title="Currency Setup"
           :ghost="false"
@@ -144,6 +147,61 @@
           :total="currenciesCount"
           :data-source="currencies"
           :loading="loading"
+          @load-data="fetchCurrencies"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="5" tab="Loan Fees">
+        <a-page-header
+          title="Loan Fees Setup"
+          :ghost="false"
+          class="list-page-header"
+        >
+          <template #extra>
+            <a-button
+              key="1"
+              type="primary"
+              @click="openForm('loanFees', false)"
+            >
+              <template #icon>
+                <PlusOutlined />
+              </template>
+
+              Add Fee
+            </a-button>
+          </template>
+        </a-page-header>
+        <loan-fees-table
+          ref="loanFeesTable"
+          label="loan fees"
+          :total="loanFeesCount"
+          :data-source="loanFees"
+          :loading="loading"
+          @load-data="fetchLoanFees"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="6" tab="Tenure">
+        <a-page-header
+          title="Tenure Setup"
+          :ghost="false"
+          class="list-page-header"
+        >
+          <template #extra>
+            <a-button key="1" type="primary" @click="openForm('tenure', false)">
+              <template #icon>
+                <PlusOutlined />
+              </template>
+
+              Add Tenure
+            </a-button>
+          </template>
+        </a-page-header>
+        <tenure-table
+          ref="tenureTable"
+          label="tenure"
+          :total="tenureListCount"
+          :data-source="tenureList"
+          :loading="loading"
+          @load-data="fetchTenure"
         />
       </a-tab-pane>
     </a-tabs>
@@ -172,8 +230,10 @@ import {
   AgroDealersTable,
   CurrenciesTable,
   FarmerLimitsTable,
-  ItemsTable,
   LoanProductsTable,
+  LoanFeesTable,
+  TenureTable,
+  // ItemsTable,
 } from "@/components/Tables";
 import { useAdmin, useFarmers, useLoans } from "@/composables";
 import { PlusOutlined } from "@ant-design/icons-vue";
@@ -185,9 +245,11 @@ export default defineComponent({
     FarmerLimitsTable,
     LoanProductsTable,
     AgroDealersTable,
-    ItemsTable,
     CurrenciesTable,
     ImportFarmerLimits,
+    LoanFeesTable,
+    TenureTable,
+    // ItemsTable,
   },
   setup() {
     const { loans, loanCount, loanStatusList } = useLoans();
@@ -200,13 +262,19 @@ export default defineComponent({
       agroDealersCount,
       items,
       itemsCount,
+      loanFees,
+      loanFeesCount,
       currencies,
       currenciesCount,
+      tenureList,
+      tenureListCount,
       fetchFarmerLimits,
       fetchLoanProducts,
       fetchAgroDealers,
       fetchItems,
       fetchCurrencies,
+      fetchLoanFees,
+      fetchTenure,
     } = useAdmin();
     const loading = ref<boolean>(false);
 
@@ -218,8 +286,10 @@ export default defineComponent({
     const limitsTable = ref<InstanceType<typeof FarmerLimitsTable>>();
     const agrodealersTable = ref<InstanceType<typeof AgroDealersTable>>();
     const productsTable = ref<InstanceType<typeof LoanProductsTable>>();
-    const itemsTable = ref<InstanceType<typeof ItemsTable>>();
+    const loanFeesTable = ref<InstanceType<typeof LoanFeesTable>>();
+    const tenureTable = ref<InstanceType<typeof TenureTable>>();
     const limitsForm = ref<InstanceType<typeof ImportFarmerLimits>>();
+    // const itemsTable = ref<InstanceType<typeof ItemsTable>>();
 
     const openForm = (form, editing) => {
       console.log(editing);
@@ -231,11 +301,15 @@ export default defineComponent({
         agrodealersTable.value.createDealer();
       } else if (form == "products") {
         productsTable.value.createProduct();
-      } else if (form == "items") {
-        itemsTable.value.createItem();
       } else if (form == "currency") {
         currencyTable.value.createCurrency();
+      } else if (form == "loanFees") {
+        loanFeesTable.value.createFee();
+      } else if (form == "tenure") {
+        tenureTable.value.createTenure();
       }
+      // } else if (form == "items") {
+      //   itemsTable.value.createItem();
     };
 
     const {
@@ -248,14 +322,19 @@ export default defineComponent({
     } = useFarmers();
 
     onMounted(async () => {
+      loading.value = true;
       try {
         await fetchFarmerLimits();
         await fetchLoanProducts();
         await fetchAgroDealers();
         await fetchItems();
         await fetchCurrencies();
+        await fetchLoanFees();
+        await fetchTenure();
       } catch (error) {
         console.error(error);
+      } finally {
+        loading.value = false;
       }
     });
 
@@ -284,7 +363,9 @@ export default defineComponent({
       limitsTable,
       agrodealersTable,
       productsTable,
-      itemsTable,
+      // itemsTable,
+      loanFeesTable,
+      tenureTable,
       limitsForm,
       farmer,
       farmerDeposits,
@@ -302,6 +383,17 @@ export default defineComponent({
       itemsCount,
       currencies,
       currenciesCount,
+      loanFees,
+      loanFeesCount,
+      tenureList,
+      tenureListCount,
+      fetchFarmerLimits,
+      fetchLoanProducts,
+      fetchAgroDealers,
+      fetchItems,
+      fetchCurrencies,
+      fetchLoanFees,
+      fetchTenure,
       openForm,
       afterVisibleChange,
       closeDrawer,

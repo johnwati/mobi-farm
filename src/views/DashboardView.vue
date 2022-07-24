@@ -1,103 +1,119 @@
 <template>
   <div class="full-width">
-    <a-row type="flex" align="stretch" :gutter="24">
-      <a-col :span="8">
-        <a-card style="width: 100%; padding: 0px; border-radius: 20px">
-          <highcharts :options="leadsBySourceSeries" />
-        </a-card>
-      </a-col>
-      <a-col :span="8">
-        <a-card style="width: 100%; padding: 0px; border-radius: 20px">
-          <highcharts :options="valueByStateBar" />
-        </a-card>
-      </a-col>
-      <a-col :span="8">
-        <a-card style="width: 100%; padding: 0px; border-radius: 20px">
-          <highcharts :options="loanProductBar" />
-        </a-card>
-      </a-col>
-    </a-row>
+    <a-spin :spinning="loading">
+      <a-row
+        type="flex"
+        :gutter="24"
+        align="stretch"
+        style="margin-bottom: 20px"
+        class="dashboard-statistics-container"
+      >
+        <a-col :span="8">
+          <a-card class="rounded">
+            <a-statistic
+              title="Approved Loans"
+              :value-style="{ fontWeight: 'bold' }"
+              :value="approvedLoans"
+            />
+          </a-card>
+        </a-col>
+        <a-col :span="8">
+          <a-card class="rounded">
+            <a-statistic
+              title="Approved Loans Value"
+              :precision="2"
+              prefix="KShs. "
+              :value-style="{ fontWeight: 'bold' }"
+              :value="approvedLoansValue"
+            />
+          </a-card>
+        </a-col>
+        <a-col :span="8">
+          <a-card class="rounded">
+            <a-statistic
+              title="Most Popular Loan Product"
+              :value-style="{ fontWeight: 'bold' }"
+              :value="mostPopularLoanProduct"
+            />
+          </a-card>
+        </a-col>
+      </a-row>
+      <a-row type="flex" align="stretch" :gutter="24">
+        <a-col :span="8">
+          <a-card class="widgetCard">
+            <a-typography-text class="widgetTitle">
+              Number of Loans by Status
+            </a-typography-text>
+            <highcharts
+              :key="statusCountSeries.value"
+              :options="leadsBySourceSeries"
+            />
+          </a-card>
+        </a-col>
+        <a-col :span="8">
+          <a-card class="widgetCard">
+            <a-typography-text class="widgetTitle">
+              Loan value by Status
+            </a-typography-text>
+            <highcharts
+              :key="statusValueSeries.value"
+              :options="valueByStateBar"
+            />
+          </a-card>
+        </a-col>
+        <a-col :span="8">
+          <a-card class="widgetCard">
+            <a-typography-text class="widgetTitle">
+              Loan Products Value
+            </a-typography-text>
+            <highcharts
+              :key="loanProductSeries.value"
+              :options="loanProductBar"
+            />
+          </a-card>
+        </a-col>
+      </a-row>
+    </a-spin>
   </div>
 </template>
 
 <script lang="ts">
-import { capitalize, computed, defineComponent } from "vue";
+import useDashboard from "@/composables/useDashboard";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
   setup() {
-    const items = {
-      count_of_applications: 4,
-      value_of_applications: 400,
-      count_of_disbursed: 0,
-      value_of_disbursed: 0,
-      count_of_approved: 1,
-      value_of_approved: 100,
-      count_of_pending: 3,
-      value_of_pending: 300,
-      count_of_rejected: 0,
-      value_of_rejected: 0,
-      count_of_defaults: 0,
-      value_of_defaults: 0,
-      count_of_written_off: 0,
-      value_of_written_off: 0,
-      count_of_fully_paid: 0,
-      value_of_fully_paid: 0,
-      count_of_due: 0,
-      value_of_due: 0,
-    };
+    const {
+      fetchLoanProductStats,
+      fetchLoansByStatus,
+      loanProductSeries,
+      statusCountSeries,
+      statusValueSeries,
+      approvedLoans,
+      approvedLoansValue,
+      mostPopularLoanProduct,
+    } = useDashboard();
 
-    const loanProductStats = [
-      {
-        id: 1961,
-        name: "Dairy Loan",
-        total_requested_amount: 1400,
-        total_requests: 5,
-      },
-      {
-        id: 317661,
-        name: "sadsadsa",
-        total_requested_amount: 0,
-        total_requests: 0,
-      },
-      {
-        id: 317718,
-        name: "ss",
-        total_requested_amount: 0,
-        total_requests: 0,
-      },
-    ];
-    const series = computed(() => {
-      return Object.entries(items)
-        .filter((i) => i[0].startsWith("count"))
-        .map((i) => ({
-          name: capitalize(i[0].replace("count_of_", "").replace("_", " ")),
-          y: i[1],
-        }));
-    });
-    const valueSeries = computed(() => {
-      return Object.entries(items)
-        .filter((i) => i[0].startsWith("value"))
-        .map((i) => ({
-          name: capitalize(i[0].replace("value_of_", "").replace("_", " ")),
-          y: i[1],
-        }));
-    });
-    const loanProductSeries = computed(() => {
-      return loanProductStats.map((i) => ({
-        name: capitalize(i.name),
-        y: i.total_requested_amount,
-      }));
-    });
-    const categories = valueSeries.value.map((i) => i.name.replace("_", " "));
-    // const categories = valueSeries.value.map((i) => i.y);
+    const loading = ref<boolean>(true);
+
+    const categories = statusValueSeries.value.map((i) =>
+      i.name.replace("_", " ")
+    );
+    const loanProducts = loanProductSeries.value.map((i) => i.name);
+
     const leadsBySourceSeries = {
       chart: {
         type: "pie",
         height: "350px",
+        style: {
+          fontFamily: "Open Sans",
+        },
       },
       title: {
-        text: "Loans by Status",
+        // text: "Loans by Status",
+        text: null,
       },
+      loading: loading,
       plotOptions: {
         pie: {
           allowPointSelect: true,
@@ -110,9 +126,9 @@ export default defineComponent({
       },
       series: [
         {
-          name: "Loans Status",
+          name: "Loans",
           colorByPoint: true,
-          data: series.value,
+          data: statusCountSeries.value,
         },
       ],
       credits: {
@@ -124,10 +140,14 @@ export default defineComponent({
       chart: {
         type: "bar",
         height: "350px",
+        style: {
+          fontFamily: "Open Sans",
+        },
       },
 
       title: {
-        text: "Loan value by Status",
+        // text: "Loan value by Status",
+        text: null,
       },
 
       credits: {
@@ -145,14 +165,14 @@ export default defineComponent({
       },
 
       tooltip: {
-        pointFormat: "{series.name}: <b>$ {point.y:,.2f}</b> <br>",
+        pointFormat: "{series.name}: <b>Ksh. {point.y:,.2f}</b> <br>",
         shared: true,
       },
 
       series: [
         {
           name: "Value",
-          data: valueSeries.value,
+          data: statusValueSeries.value,
         },
       ],
     };
@@ -161,10 +181,14 @@ export default defineComponent({
       chart: {
         type: "bar",
         height: "350px",
+        style: {
+          fontFamily: "Open Sans",
+        },
       },
 
       title: {
-        text: "Loan Products Value",
+        // text: "Loan Products Value",
+        text: null,
       },
 
       credits: {
@@ -174,7 +198,7 @@ export default defineComponent({
       colors: ["#3B90D3", "#1E3D73"],
 
       xAxis: {
-        categories,
+        categories: loanProducts,
       },
 
       yAxis: {
@@ -182,7 +206,7 @@ export default defineComponent({
       },
 
       tooltip: {
-        pointFormat: "{series.name}: <b>$ {point.y:,.2f}</b> <br>",
+        pointFormat: "{series.name}: <b>Ksh. {point.y:,.2f}</b> <br>",
         shared: true,
       },
 
@@ -194,11 +218,51 @@ export default defineComponent({
       ],
     };
 
+    onMounted(async () => {
+      loading.value = true;
+      try {
+        await fetchLoanProductStats();
+        await fetchLoansByStatus();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loading.value = false;
+      }
+    });
+
     return {
       valueByStateBar,
       leadsBySourceSeries,
       loanProductBar,
+      loanProducts,
+      loanProductSeries,
+      statusCountSeries,
+      statusValueSeries,
+      approvedLoans,
+      approvedLoansValue,
+      mostPopularLoanProduct,
+      loading,
     };
   },
 });
 </script>
+
+<style scoped>
+.widgetTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #363636;
+  text-align: center;
+}
+
+.widgetCard {
+  width: 100%;
+  padding: 0px;
+  border-radius: 12px;
+}
+
+.rounded {
+  border-radius: 12px;
+}
+</style>
