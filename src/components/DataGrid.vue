@@ -330,6 +330,10 @@
       <template v-if="text"> KShs. {{ text }} </template>
     </template>
 
+    <template #percentage="{ text }">
+      <template v-if="text"> {{ text }}% </template>
+    </template>
+
     <template #boolean="{ text }"> {{ text ? "Yes" : "No" }} </template>
 
     <template #dateTime="{ text }">
