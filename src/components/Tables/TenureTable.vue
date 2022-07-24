@@ -6,11 +6,11 @@
     :columns="columns"
     :loading="loading"
     :rowExpandable="false"
-    @edit="editCurrency"
+    @edit="editTenure"
   />
 
   <a-drawer
-    title="Currency Form"
+    title="Tenure Form"
     placement="right"
     :closable="false"
     :mask-closable="false"
@@ -18,8 +18,8 @@
     v-model:visible="formVisible"
     @after-visible-change="afterVisibleChange"
   >
-    <currency-form
-      ref="currencyForm"
+    <tenure-form
+      ref="tenureForm"
       :is-editing="isEditing"
       @close-drawer="closeDrawer"
     />
@@ -29,15 +29,15 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import DataGrid from "@/components/DataGrid.vue";
-import { CurrencyForm } from "@/components/Forms";
+import { TenureForm } from "@/components/Forms";
 import { useAdmin } from "@/composables";
 
 export default defineComponent({
-  name: "CurrenciesTable",
+  name: "TenureTable",
 
   components: {
     DataGrid,
-    CurrencyForm,
+    TenureForm,
   },
 
   emits: ["load-data"],
@@ -67,33 +67,34 @@ export default defineComponent({
   setup(props, { emit }) {
     const columns = ref([
       {
-        title: "Symbol",
-        dataIndex: "symbol",
-        key: "symbol",
-        filterKey: "symbol_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
-        },
-        // sorter: true,
-      },
-      {
-        title: "Currency Name",
+        title: "Name",
         dataIndex: "name",
         key: "name",
         filterKey: "name_contains",
         // slots: {
         //   filterIcon: "filterIcon",
         //   filterDropdown: "filterDropdown",
+        // customRender: "currency",
         // },
         // sorter: true,
       },
       {
-        title: "Decimal places",
-        dataIndex: "decimalPlaces",
-        key: "decimalPlaces",
-        filterKey: "decimalPlaces_contains",
+        title: "Min Amount",
+        dataIndex: "min_amount",
+        key: "min_amount",
+        filterKey: "min_amount_contains",
+        slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // customRender: "percentage",
+        },
+        // sorter: true,
+      },
+      {
+        title: "Max Amount",
+        dataIndex: "max_amount",
+        key: "max_amount",
+        filterKey: "max_amount_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
@@ -102,10 +103,22 @@ export default defineComponent({
         // sorter: true,
       },
       {
-        title: "Format",
-        dataIndex: "format",
-        key: "format",
-        filterKey: "format_contains",
+        title: "Repayment Duration",
+        dataIndex: "repayment_duration",
+        key: "repayment_duration",
+        filterKey: "repayment_duration_contains",
+        slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // customRender: "currency",
+        },
+        // sorter: true,
+      },
+      {
+        title: "Code",
+        dataIndex: "code",
+        key: "code",
+        filterKey: "code_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
@@ -136,17 +149,17 @@ export default defineComponent({
 
     const formVisible = ref<boolean>(false);
 
-    const currencyForm = ref<InstanceType<typeof CurrencyForm>>();
+    const tenureForm = ref<InstanceType<typeof TenureForm>>();
 
-    const { setCurrency } = useAdmin();
+    const { setTenure } = useAdmin();
 
-    const createCurrency = () => {
+    const createTenure = () => {
       formVisible.value = true;
       isEditing.value = false;
     };
 
-    const editCurrency = async (data) => {
-      await setCurrency(data);
+    const editTenure = async (data) => {
+      await setTenure(data);
       formVisible.value = true;
       isEditing.value = true;
     };
@@ -157,7 +170,7 @@ export default defineComponent({
 
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
-        currencyForm.value?.reset();
+        tenureForm.value?.reset();
         emit("load-data");
       }
     };
@@ -165,9 +178,9 @@ export default defineComponent({
       columns,
       isEditing,
       formVisible,
-      currencyForm,
-      createCurrency,
-      editCurrency,
+      tenureForm,
+      createTenure,
+      editTenure,
       closeDrawer,
       afterVisibleChange,
     };

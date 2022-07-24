@@ -42,6 +42,8 @@ export default defineComponent({
     FarmerLimitsForm,
   },
 
+  emits: ["load-data"],
+
   props: {
     label: {
       type: String,
@@ -64,7 +66,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props, { emit }) {
     const { setFarmerLimit, deleteFarmerLimits, fetchFarmerLimits } =
       useAdmin();
 
@@ -190,6 +192,7 @@ export default defineComponent({
 
     const removeLimit = async (limit) => {
       await deleteFarmerLimits(limit.id);
+      emit("load-data");
     };
 
     const closeDrawer = () => {
@@ -207,6 +210,7 @@ export default defineComponent({
         farmerLimitsForm.value?.reset();
         isEditing.value = false;
         await setFarmerLimit({});
+        emit("load-data");
       }
     };
     return {

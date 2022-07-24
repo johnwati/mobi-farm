@@ -5,6 +5,8 @@ import LoanProductsTable from "./LoanProductsTable.vue";
 import AgroDealersTable from "./AgrodealersTable.vue";
 import CurrenciesTable from "./CurrenciesTable.vue";
 import ItemsTable from "./ItemsTable.vue";
+import LoanFeesTable from "./LoanFeesTable.vue";
+import TenureTable from "./TenureTable.vue";
 
 export {
   FarmerLimitsTable,
@@ -14,4 +16,6 @@ export {
   AgroDealersTable,
   CurrenciesTable,
   ItemsTable,
+  LoanFeesTable,
+  TenureTable,
 };

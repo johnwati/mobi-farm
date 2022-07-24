@@ -52,9 +52,9 @@ export default defineComponent({
         ? [
             {
               title: "Transaction Code",
-              dataIndex: "transaction_code",
-              key: "transaction_code",
-              filterKey: "transaction_code_contains",
+              dataIndex: "transaction_id",
+              key: "transaction_id",
+              filterKey: "transaction_id_contains",
               // slots: {
               //   filterIcon: "filterIcon",
               //   filterDropdown: "filterDropdown",
@@ -73,7 +73,7 @@ export default defineComponent({
               // sorter: true,
             },
             {
-              title: "Amount",
+              title: "Debit",
               dataIndex: "debit",
               key: "debit",
               filterKey: "debit_contains",
@@ -85,16 +85,22 @@ export default defineComponent({
               // sorter: true,
             },
             {
-              title: "Account Type",
-              dataIndex: "account_type",
-              key: "account_type",
-              filterKey: "account_type_contains",
-              // slots: {
-              //   filterIcon: "filterIcon",
-              //   filterDropdown: "filterDropdown",
-              // customRender: "currency",
-              // },
+              title: "Credit",
+              dataIndex: "credit",
+              key: "credit",
+              filterKey: "credit_contains",
+              slots: {
+                //   filterIcon: "filterIcon",
+                //   filterDropdown: "filterDropdown",
+                customRender: "currency",
+              },
               // sorter: true,
+            },
+            {
+              title: "Note",
+              dataIndex: "note",
+              key: "note",
+              filterKey: "note_contains",
             },
             {
               title: "Time",
@@ -112,9 +118,9 @@ export default defineComponent({
         : [
             {
               title: "Transaction Code",
-              dataIndex: "transaction_code",
-              key: "transaction_code",
-              filterKey: "transaction_code_contains",
+              dataIndex: "transaction_id",
+              key: "transaction_id",
+              filterKey: "transaction_id_contains",
               // slots: {
               //   filterIcon: "filterIcon",
               //   filterDropdown: "filterDropdown",
@@ -122,7 +128,7 @@ export default defineComponent({
               // sorter: true,
             },
             {
-              title: "Amount",
+              title: "Debit",
               dataIndex: "debit",
               key: "debit",
               filterKey: "debit_contains",
@@ -131,7 +137,25 @@ export default defineComponent({
                 //   filterDropdown: "filterDropdown",
                 customRender: "currency",
               },
-              // sorter: true,
+              sorter: true,
+            },
+            {
+              title: "Credit",
+              dataIndex: "credit",
+              key: "credit",
+              filterKey: "credit_contains",
+              slots: {
+                //   filterIcon: "filterIcon",
+                //   filterDropdown: "filterDropdown",
+                customRender: "currency",
+              },
+              sorter: true,
+            },
+            {
+              title: "Note",
+              dataIndex: "note",
+              key: "note",
+              filterKey: "note_contains",
             },
             {
               title: "Time",

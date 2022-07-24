@@ -6,11 +6,11 @@
     :columns="columns"
     :loading="loading"
     :rowExpandable="false"
-    @edit="editCurrency"
+    @edit="editFee"
   />
 
   <a-drawer
-    title="Currency Form"
+    title="Loan Fee Form"
     placement="right"
     :closable="false"
     :mask-closable="false"
@@ -18,8 +18,8 @@
     v-model:visible="formVisible"
     @after-visible-change="afterVisibleChange"
   >
-    <currency-form
-      ref="currencyForm"
+    <loan-fees-form
+      ref="loanFeeForm"
       :is-editing="isEditing"
       @close-drawer="closeDrawer"
     />
@@ -29,15 +29,15 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import DataGrid from "@/components/DataGrid.vue";
-import { CurrencyForm } from "@/components/Forms";
+import { LoanFeesForm } from "@/components/Forms";
 import { useAdmin } from "@/composables";
 
 export default defineComponent({
-  name: "CurrenciesTable",
+  name: "LoanFeesTable",
 
   components: {
     DataGrid,
-    CurrencyForm,
+    LoanFeesForm,
   },
 
   emits: ["load-data"],
@@ -67,10 +67,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const columns = ref([
       {
-        title: "Symbol",
-        dataIndex: "symbol",
-        key: "symbol",
-        filterKey: "symbol_contains",
+        title: "Fee Name",
+        dataIndex: "fee_name",
+        key: "fee_name",
+        filterKey: "fee_name_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
@@ -79,21 +79,22 @@ export default defineComponent({
         // sorter: true,
       },
       {
-        title: "Currency Name",
-        dataIndex: "name",
-        key: "name",
-        filterKey: "name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
+        title: "Interest Rate",
+        dataIndex: "rate",
+        key: "rate",
+        filterKey: "rate_contains",
+        slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          customRender: "percentage",
+        },
         // sorter: true,
       },
       {
-        title: "Decimal places",
-        dataIndex: "decimalPlaces",
-        key: "decimalPlaces",
-        filterKey: "decimalPlaces_contains",
+        title: "Fee Type",
+        dataIndex: "loan_fee_type",
+        key: "loan_fee_type",
+        filterKey: "loan_fee_type_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
@@ -102,10 +103,10 @@ export default defineComponent({
         // sorter: true,
       },
       {
-        title: "Format",
-        dataIndex: "format",
-        key: "format",
-        filterKey: "format_contains",
+        title: "Duration",
+        dataIndex: "duration",
+        key: "duration",
+        filterKey: "duration_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
@@ -114,14 +115,26 @@ export default defineComponent({
         // sorter: true,
       },
       {
-        title: "Active",
-        dataIndex: "active",
-        key: "active",
-        filterKey: "active_contains",
+        title: "Loan Product",
+        dataIndex: "product_name",
+        key: "product_name",
+        filterKey: "product_name_contains",
         slots: {
           //   filterIcon: "filterIcon",
           //   filterDropdown: "filterDropdown",
-          customRender: "boolean",
+          // customRender: "currency",
+        },
+        // sorter: true,
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        filterKey: "status_contains",
+        slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // customRender: "boolean",
         },
         // sorter: true,
       },
@@ -136,17 +149,17 @@ export default defineComponent({
 
     const formVisible = ref<boolean>(false);
 
-    const currencyForm = ref<InstanceType<typeof CurrencyForm>>();
+    const loanFeeForm = ref<InstanceType<typeof LoanFeesForm>>();
 
-    const { setCurrency } = useAdmin();
+    const { setLoanFee } = useAdmin();
 
-    const createCurrency = () => {
+    const createFee = () => {
       formVisible.value = true;
       isEditing.value = false;
     };
 
-    const editCurrency = async (data) => {
-      await setCurrency(data);
+    const editFee = async (data) => {
+      await setLoanFee(data);
       formVisible.value = true;
       isEditing.value = true;
     };
@@ -157,7 +170,7 @@ export default defineComponent({
 
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
-        currencyForm.value?.reset();
+        loanFeeForm.value?.reset();
         emit("load-data");
       }
     };
@@ -165,9 +178,9 @@ export default defineComponent({
       columns,
       isEditing,
       formVisible,
-      currencyForm,
-      createCurrency,
-      editCurrency,
+      loanFeeForm,
+      createFee,
+      editFee,
       closeDrawer,
       afterVisibleChange,
     };

@@ -40,6 +40,8 @@ export default defineComponent({
     LoanProductForm,
   },
 
+  emits: ["load-data"],
+
   props: {
     label: {
       type: String,
@@ -62,7 +64,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props, { emit }) {
     const { setLoanProduct } = useAdmin();
     const columns = ref([
       {
@@ -70,24 +72,6 @@ export default defineComponent({
         dataIndex: "name",
         key: "name",
         filterKey: "name_contains",
-      },
-      {
-        title: "Interest Rate (%)",
-        dataIndex: "interest",
-        key: "interest",
-        filterKey: "interest_contains",
-        slots: {
-          // customRender: "currency",
-        },
-      },
-      {
-        title: "Service Fee",
-        dataIndex: "service_fee",
-        key: "service_fee",
-        filterKey: "service_fee_contains",
-        slots: {
-          customRender: "currency",
-        },
       },
       {
         title: "Min Amount",
@@ -108,73 +92,52 @@ export default defineComponent({
         },
       },
       {
-        title: "Min Payment Duration",
-        dataIndex: "min_payment_duration",
-        key: "min_payment_duration",
-        filterKey: "min_payment_duration_contains",
-        slots: {
-          // customRender: "currency",
-        },
-      },
-      {
-        title: "Max Payment Duration",
-        dataIndex: "max_payment_duration",
-        key: "max_payment_duration",
-        filterKey: "max_payment_duration_contains",
-        slots: {
-          // customRender: "currency",
-        },
-      },
-      {
-        title: "Processing Insurance",
-        dataIndex: "processing_insurance",
-        key: "processing_insurance",
-        filterKey: "processing_insurance_contains",
-      },
-      {
         title: "Repayment Method",
         dataIndex: "repayment_method",
         key: "repayment_method",
         filterKey: "repayment_method_contains",
       },
-      {
-        title: "Has Penalty",
-        dataIndex: "has_penalty",
-        key: "has_penalty",
-        filterKey: "has_penalty_contains",
-        slots: {
-          customRender: "boolean",
-        },
-      },
-      {
-        title: "Penalty Rate Type",
-        dataIndex: "penalty_rate_type",
-        key: "penalty_rate_type",
-        filterKey: "penalty_rate_type_contains",
-      },
-      {
-        title: "Penalty Rate",
-        dataIndex: "penalty_rate",
-        key: "penalty_rate",
-        filterKey: "penalty_rate_contains",
-      },
+      // {
+      //   title: "Interest Rate (%)",
+      //   dataIndex: "interest",
+      //   key: "interest",
+      //   filterKey: "interest_contains",
+      //   slots: {
+      //     // customRender: "currency",
+      //   },
+      // },
+      // {
+      //   title: "Fee Type",
+      //   dataIndex: "loan_fees_data.loan_fee_type",
+      //   key: "loan_fees_data.loan_fee_type",
+      //   filterKey: "loan_fee_type_contains",
+      //   slots: {
+      //     customRender: "currency",
+      //   },
+      // },
+      // {
+      //   title: "Duration",
+      //   dataIndex: "loan_fees_data.duration",
+      //   key: "loan_fees_data.duration",
+      //   filterKey: "duration_contains",
+      //   slots: {
+      //     // customRender: "currency",
+      //   },
+      // },
+      // {
+      //   title: "Charged on",
+      //   dataIndex: "loan_fees_data.charged_on",
+      //   key: "loan_fees_data.charged_on",
+      //   filterKey: "charged_on_contains",
+      //   slots: {
+      //     // customRender: "currency",
+      //   },
+      // },
       {
         title: "Max Grace Period",
         dataIndex: "max_grace_period",
         key: "max_grace_period",
         filterKey: "max_grace_period_contains",
-      },
-      {
-        title: "Penalty grace period",
-        dataIndex: "penalty_grace_period",
-        key: "penalty_grace_period",
-        filterKey: "penalty_grace_period_contains",
-      },
-      {
-        title: "Min guarantors",
-        dataIndex: "min_guarantors",
-        key: "min_guarantors",
-        filterKey: "min_guarantors_contains",
       },
       {
         title: "Allow Concurrent Loans",
@@ -211,12 +174,6 @@ export default defineComponent({
           filterDropdown: "filterDropdown",
         },
       },
-      // {
-      //   title: "Requested Amount",
-      //   dataIndex: "requested_amount",
-      //   key: "requested_amount",
-      //   filterKey: "requested_amount_contains",
-      // },
       {
         title: "Action",
         key: "action",
@@ -248,6 +205,7 @@ export default defineComponent({
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
         loanProductForm.value?.reset();
+        emit("load-data");
       }
     };
     return {

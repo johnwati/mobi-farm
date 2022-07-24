@@ -15,6 +15,7 @@
     :closable="false"
     :mask-closable="false"
     size="large"
+    :destroyOnClose="true"
     v-model:visible="formVisible"
     @after-visible-change="afterVisibleChange"
   >
@@ -40,6 +41,8 @@ export default defineComponent({
     AgroDealersForm,
   },
 
+  emits: ["load-data"],
+
   props: {
     label: {
       type: String,
@@ -62,7 +65,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props, { emit }) {
     const columns = ref([
       {
         title: "Name",
@@ -219,8 +222,8 @@ export default defineComponent({
     const agrodealersForm = ref<InstanceType<typeof AgroDealersForm>>();
 
     const createDealer = () => {
-      formVisible.value = true;
       isEditing.value = false;
+      formVisible.value = true;
     };
 
     const editDealer = async (data) => {
@@ -232,11 +235,13 @@ export default defineComponent({
 
     const closeDrawer = () => {
       formVisible.value = false;
+      isEditing.value = false;
     };
 
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
         agrodealersForm.value?.reset();
+        emit("load-data");
       }
     };
 
