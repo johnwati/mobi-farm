@@ -23,11 +23,19 @@ export default function useAdmin(): {
   item: ComputedRef;
   items: ComputedRef<Record<string, unknown>[]>;
   itemsCount: ComputedRef<number>;
+  loanFee: ComputedRef;
+  loanFees: ComputedRef<Record<string, unknown>[]>;
+  loanFeesCount: ComputedRef<number>;
+  tenure: ComputedRef;
+  tenureList: ComputedRef<Record<string, unknown>[]>;
+  tenureListCount: ComputedRef<number>;
   createFarmerLimit: (payload) => Promise<void>;
   createCurrency: (payload) => Promise<void>;
   createLoanProduct: (payload) => Promise<void>;
   createAgroDealer: (payload) => Promise<void>;
   createItem: (payload) => Promise<void>;
+  createLoanFees: (payload) => Promise<void>;
+  createTenure: (payload) => Promise<void>;
   fetchFarmerLimits: () => Promise<void>;
   fetchLoanProducts: () => Promise<void>;
   fetchAgroDealers: () => Promise<void>;
@@ -35,15 +43,21 @@ export default function useAdmin(): {
   fetchItems: () => Promise<void>;
   // fetchItem: () => Promise<void>;
   fetchCurrencies: () => Promise<void>;
+  fetchLoanFees: () => Promise<void>;
+  fetchTenure: () => Promise<void>;
   setFarmerLimit: (payload) => Promise<void>;
   setLoanProduct: (payload) => Promise<void>;
   setAgroDealer: (payload) => Promise<void>;
   setItem: (payload) => Promise<void>;
   setCurrency: (payload) => Promise<void>;
+  setLoanFee: (payload) => Promise<void>;
+  setTenure: (payload) => Promise<void>;
   updateFarmerLimits: (payload) => Promise<void>;
   updateLoanProduct: (payload) => Promise<void>;
   updateAgroDealer: (payload) => Promise<void>;
   updateItem: (payload) => Promise<void>;
+  updateLoanFees: (payload) => Promise<void>;
+  updateTenure: (payload) => Promise<void>;
   updateCurrency: (payload) => Promise<void>;
   deleteFarmerLimits: (payload) => Promise<void>;
   // deleteLoanProduct: (payload) => Promise<void>;
@@ -84,6 +98,18 @@ export default function useAdmin(): {
   const items = computed(() => store.getItems);
 
   const itemsCount = computed(() => store.getItemsCount);
+
+  const loanFee = computed(() => store.loanFee);
+
+  const loanFees = computed(() => store.getLoanFees);
+
+  const loanFeesCount = computed(() => store.getLoanFeesCount);
+
+  const tenure = computed(() => store.tenure);
+
+  const tenureList = computed(() => store.getTenureList);
+
+  const tenureListCount = computed(() => store.getTenureListCount);
 
   async function fetchFarmerLimits(): Promise<void> {
     try {
@@ -197,6 +223,70 @@ export default function useAdmin(): {
     }
   }
 
+  async function fetchLoanFees(): Promise<void> {
+    try {
+      await store.fetchLoanFees();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function fetchTenure(): Promise<void> {
+    try {
+      await store.fetchTenure();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createLoanFees(payload): Promise<void> {
+    try {
+      await store.createLoanFees(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createTenure(payload): Promise<void> {
+    try {
+      await store.createTenure(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateLoanFees(payload): Promise<void> {
+    try {
+      await store.updateLoanFees(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateTenure(payload): Promise<void> {
+    try {
+      await store.updateTenure(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // // async function fetchItem(payload): Promise<void> {
+  // //   try {
+  // //     await store.fetchItem(payload);
+  // //   } catch (error) {
+  // //     console.error(error);
+  // //   }
+  // // }
+
+  // async function updateItem(payload): Promise<void> {
+  //   try {
+  //     await store.updateItem(payload);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
   async function fetchItems(): Promise<void> {
     try {
       await store.fetchItems();
@@ -270,6 +360,22 @@ export default function useAdmin(): {
     }
   }
 
+  async function setLoanFee(payload): Promise<void> {
+    try {
+      await store.setLoanFee(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function setTenure(payload): Promise<void> {
+    try {
+      await store.setTenure(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return {
     loanProduct,
     loanProducts,
@@ -283,30 +389,44 @@ export default function useAdmin(): {
     item,
     items,
     itemsCount,
+    loanFee,
+    loanFees,
+    loanFeesCount,
     currency,
     currencies,
     currenciesCount,
+    tenure,
+    tenureList,
+    tenureListCount,
     createFarmerLimit,
     createCurrency,
     createLoanProduct,
     createAgroDealer,
     createItem,
+    createLoanFees,
+    createTenure,
     fetchFarmerLimits,
     fetchLoanProducts,
     fetchAgroDealers,
     fetchAgroDealer,
     fetchCurrencies,
     fetchItems,
+    fetchLoanFees,
+    fetchTenure,
     setAgroDealer,
     setCurrency,
     setFarmerLimit,
     setItem,
     setLoanProduct,
+    setLoanFee,
+    setTenure,
     updateFarmerLimits,
     updateAgroDealer,
     updateCurrency,
     updateItem,
     updateLoanProduct,
+    updateLoanFees,
+    updateTenure,
     deleteFarmerLimits,
   };
 }

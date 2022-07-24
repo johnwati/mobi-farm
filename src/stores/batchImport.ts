@@ -37,10 +37,13 @@ export const useBatchImportStore = defineStore({
 
     async batchImport(payload) {
       try {
-        const response = await $http.Api({
+        const response = await $http.Api2({
           method: "POST",
-          url: `/api/import/${payload.fileType}`,
-          data: payload.file,
+          url: `/import/${payload.fileType}`,
+          data: {
+            file: payload.file[0],
+          },
+          // url: `/import/${payload.fileType}?file=${payload.file}`,
         });
         return response.data;
       } catch (error) {

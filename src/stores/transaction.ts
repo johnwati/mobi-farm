@@ -5,10 +5,7 @@ import { defineStore } from "pinia";
 export const useTransactionStore = defineStore({
   id: "transactions",
   state: () => ({
-    deposits: {
-      content: [],
-      total_elements: 0,
-    },
+    deposits: [],
     transactions: [],
     transaction: {},
     isLoading: false,
@@ -22,11 +19,11 @@ export const useTransactionStore = defineStore({
   actions: {
     async fetchDeposits() {
       try {
-        const response = await $http.Api({
+        const response = await $http.Api3({
           method: "GET",
-          url: "/transaction?transactionType=DEPOSIT",
+          url: "/wallettransactions",
         });
-        this.deposits = response.data.data;
+        this.deposits = response.data;
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

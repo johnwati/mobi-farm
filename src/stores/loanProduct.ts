@@ -30,7 +30,7 @@ export const useLoanProductStore = defineStore({
 
     async fetchLoanFees() {
       try {
-        const response = await $http.Api({
+        const response = await $http.Api2({
           method: "GET",
           url: `/loan-fees`,
         });

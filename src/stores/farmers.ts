@@ -14,14 +14,22 @@ export const useFarmersStore = defineStore({
         total_elements: 0,
       },
     },
-    farmerDeposits: {
-      content: [],
-      total_elements: 0,
+    farmerLoanLimits: {
+      data: [],
+      page_details: {
+        total_elements: 0,
+      },
     },
-    farmerLoanPayments: {
-      content: [],
-      total_elements: 0,
-    },
+    farmerDeposits: [],
+    farmerLoanPayments: [],
+    // farmerDeposits: {
+    //   content: [],
+    //   total_elements: 0,
+    // },
+    // farmerLoanPayments: {
+    //   content: [],
+    //   total_elements: 0,
+    // },
     farmerAccount: {},
     farmerAccountBalance: 10000,
     isLoading: false,
@@ -33,10 +41,17 @@ export const useFarmersStore = defineStore({
     getFarmerLoans: (state) => state.farmerLoans?.data,
     getFarmerLoansCount: (state) =>
       state.farmerLoans?.page_details?.total_elements,
-    getFarmerDeposits: (state) => state.farmerDeposits?.content,
-    getFarmerDepositCount: (state) => state.farmerDeposits?.total_elements,
-    getFarmerLoanPayments: (state) => state.farmerLoanPayments?.content,
-    getFarmerPaymentsCount: (state) => state.farmerLoanPayments?.total_elements,
+    getFarmerLimits: (state) => state.farmerLoanLimits?.data,
+    getFarmerLimitsCount: (state) =>
+      state.farmerLoanLimits?.page_details?.total_elements,
+    getFarmerDeposits: (state) => state.farmerDeposits,
+    getFarmerDepositCount: (state) => state.farmerDeposits.length,
+    getFarmerLoanPayments: (state) => state.farmerLoanPayments,
+    getFarmerPaymentsCount: (state) => state.farmerLoanPayments.length,
+    // getFarmerDeposits: (state) => state.farmerDeposits?.content,
+    // getFarmerDepositCount: (state) => state.farmerDeposits?.total_elements,
+    // getFarmerLoanPayments: (state) => state.farmerLoanPayments?.content,
+    // getFarmerPaymentsCount: (state) => state.farmerLoanPayments?.total_elements,
     getFarmer: (state) => state.farmer,
     getLoading: (state) => state.isLoading,
   },
@@ -120,13 +135,27 @@ export const useFarmersStore = defineStore({
       }
     },
 
-    async fetchFarmerDeposits(farmerCode: string) {
+    async fetchFarmerDeposits(farmerId: number) {
+      try {
+        const response = await $http.Api3({
+          method: "GET",
+          url: `/wallettransactions/customer-transactions/${farmerId}`,
+          // url: `/transaction?memberCode=${farmerCode}&transactionType=DEPOSIT`,
+        });
+        this.farmerDeposits = response.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchFarmerLoanLimits(farmerId: number) {
       try {
         const response = await $http.Api({
           method: "GET",
-          url: `/transaction?memberCode=${farmerCode}&transactionType=DEPOSIT`,
+          url: `/farmer-limits?farmerId=${farmerId}`,
         });
-        this.farmerDeposits = response.data.data;
+        this.farmerLoanLimits = response.data;
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -146,13 +175,14 @@ export const useFarmersStore = defineStore({
       }
     },
 
-    async fetchFarmerLoanPayments(farmerCode: string) {
+    async fetchFarmerLoanPayments(farmerId: number) {
       try {
-        const response = await $http.Api({
+        const response = await $http.Api3({
           method: "GET",
-          url: `/transaction?memberCode=${farmerCode}&transactionType=PAYMENT`,
+          // url: `/transaction?memberCode=${farmerCode}&transactionType=PAYMENT`,
+          url: `/wallettransactions/customer-transactions/${farmerId}`,
         });
-        this.farmerLoanPayments = response.data.data;
+        this.farmerLoanPayments = response.data;
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

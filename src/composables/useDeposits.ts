@@ -10,11 +10,9 @@ export default function useDeposits(): {
 } {
   const transactionStore = useTransactionStore();
 
-  const deposits = computed(() => transactionStore.deposits.content);
+  const deposits = computed(() => transactionStore.deposits);
 
-  const depositsCount = computed(
-    () => transactionStore.deposits.total_elements
-  );
+  const depositsCount = computed(() => transactionStore.deposits.length);
 
   async function fetchDeposits(): Promise<void> {
     try {

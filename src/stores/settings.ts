@@ -31,6 +31,18 @@ export const useSettingsStore = defineStore({
         total_elements: 0,
       },
     },
+    loanFee: {},
+    loanFees: {
+      content: [],
+      total_elements: 0,
+    },
+    tenure: {},
+    tenureList: {
+      data: [],
+      page_details: {
+        total_elements: 0,
+      },
+    },
   }),
   getters: {
     farmerLimitsCount: (state) => state.farmerLimits?.length || 0,
@@ -43,6 +55,11 @@ export const useSettingsStore = defineStore({
     getCurrenciesCount: (state) => state.currencies?.total_elements || 0,
     getItems: (state) => state.items?.content || [],
     getItemsCount: (state) => state.items?.page_details?.total_elements || 0,
+    getLoanFees: (state) => state.loanFees?.content || [],
+    getLoanFeesCount: (state) => state.loanFees?.total_elements || 0,
+    getTenureList: (state) => state.tenureList?.data || [],
+    getTenureListCount: (state) =>
+      state.tenureList?.page_details?.total_elements || 0,
   },
   actions: {
     async fetchFarmerLimits() {
@@ -144,6 +161,84 @@ export const useSettingsStore = defineStore({
           data: payload.data,
         });
         this.agroDealer = response.data.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchLoanFees() {
+      try {
+        const response = await $http.Api2({
+          method: "GET",
+          url: "/loan-fees",
+        });
+        this.loanFees = response.data.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async createLoanFees(payload) {
+      try {
+        await $http.Api2({
+          method: "POST",
+          url: `/loan-fees`,
+          data: payload,
+        });
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async updateLoanFees(payload) {
+      try {
+        await $http.Api2({
+          method: "PUT",
+          url: `/loan-fees/${payload.id}`,
+          data: payload.data,
+        });
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async fetchTenure() {
+      try {
+        const response = await $http.Api2({
+          method: "GET",
+          url: "/tenure",
+        });
+        this.tenureList = response.data;
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async createTenure(payload) {
+      try {
+        await $http.Api2({
+          method: "POST",
+          url: `/tenure`,
+          data: payload,
+        });
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
+    async updateTenure(payload) {
+      try {
+        await $http.Api2({
+          method: "PUT",
+          url: `/tenure/${payload.id}`,
+          data: payload.data,
+        });
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -257,6 +352,22 @@ export const useSettingsStore = defineStore({
     async setItem(payload) {
       try {
         this.item = payload;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async setLoanFee(payload) {
+      try {
+        this.loanFee = payload;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async setTenure(payload) {
+      try {
+        this.tenure = payload;
       } catch (error) {
         console.error(error);
       }
