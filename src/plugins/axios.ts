@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosRequestConfig } from "axios";
+// import type { AxiosRequestConfig } from "axios";
 import { notification } from "ant-design-vue";
 
 import router from "@/router";
@@ -34,16 +34,16 @@ const $http = {
   }),
 };
 
-const accessToken = () => localStorage.getItem("access_token");
+// const accessToken = () => localStorage.getItem("access_token");
 
-const authenticationInterceptor = (config: AxiosRequestConfig) => {
-  // eslint-disable-next-line no-param-reassign
-  config.headers = {
-    Authorization: `Bearer ${accessToken()}`,
-  };
-  return config;
-};
-$http.Api.interceptors.request.use(authenticationInterceptor);
+// const authenticationInterceptor = (config: AxiosRequestConfig) => {
+//   // eslint-disable-next-line no-param-reassign
+//   config.headers = {
+//     Authorization: `Bearer ${accessToken()}`,
+//   };
+//   return config;
+// };
+// $http.Api.interceptors.request.use(authenticationInterceptor);
 $http.Api.interceptors.response.use(
   (response) => response,
   (error) => {
