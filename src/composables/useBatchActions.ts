@@ -7,6 +7,7 @@ export default function useBatchActions(): {
   importTemplate: ComputedRef<unknown>;
   fetchBatchImportTemplate: (payload) => Promise<void>;
   batchImportData: (payload) => Promise<void>;
+  downloadReport: (payload) => Promise<void>;
 } {
   const store = useBatchImportStore();
 
@@ -28,9 +29,18 @@ export default function useBatchActions(): {
     }
   }
 
+  async function downloadReport(payload): Promise<void> {
+    try {
+      await store.downloadReport(payload);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return {
     importTemplate,
     fetchBatchImportTemplate,
     batchImportData,
+    downloadReport,
   };
 }

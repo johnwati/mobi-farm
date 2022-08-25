@@ -35,6 +35,28 @@ export const useBatchImportStore = defineStore({
       }
     },
 
+    async downloadReport(payload) {
+      try {
+        const response = await $http.Api2({
+          method: "GET",
+          url: `/report?reportName=${payload.reportName}&format=${payload.format}`,
+          responseType: "blob",
+        });
+        console.log(response);
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = payload.reportName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (error) {
+        const err = error as AxiosError;
+        throw err.response;
+      }
+    },
+
     async batchImport(payload) {
       try {
         const response = await $http.Api2({
