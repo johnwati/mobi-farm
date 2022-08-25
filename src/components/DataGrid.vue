@@ -48,6 +48,7 @@
             >
               <template #extra>
                 <a-button
+                  v-if="!hasPermission('loan-management')"
                   @click="editLoanStatus(record)"
                   type="primary"
                   class="success_button"
@@ -120,8 +121,8 @@
               align="stretch"
               style="width: 100%; height: 100%; background-color: white"
             >
-              <a-col :span="6">
-                <a-card>
+              <a-col :span="8">
+                <a-card style="background-color: whitesmoke">
                   <a-descriptions
                     :column="1"
                     :contentStyle="{
@@ -160,7 +161,7 @@
                   </a-descriptions>
                 </a-card>
               </a-col>
-              <a-col :span="18">
+              <a-col :span="16">
                 <a-row style="padding: 24px">
                   <a-col :span="12">
                     <a-descriptions
@@ -237,12 +238,12 @@
       </div>
     </template>
 
-    <template #filterDropdown="{ column: { title, filterKey } }">
+    <template #filterDropdown="{ column: { title, filterKey, onFilter } }">
       <a-input
         ref="searchInput"
         :placeholder="`Search ${title}`"
         :value="selectedKeys[filterKey]"
-        @input="(e) => handleSearch(e.target.value, filterKey)"
+        @input="(e) => onFilter(e.target.value, dataSource)"
       />
     </template>
 
@@ -374,7 +375,7 @@
 import { computed, defineComponent, ref } from "vue";
 
 import { LoanStatusForm } from "@/components/Forms";
-import { useLoans } from "@/composables";
+import { useAppAuthentication, useLoans } from "@/composables";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -444,6 +445,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const { loanStatusList, setLoan } = useLoans();
     const route = useRoute();
+
+    const { hasPermission } = useAppAuthentication();
 
     const current = ref<number>(1);
 
@@ -569,6 +572,7 @@ export default defineComponent({
       afterVisibleChange,
       openMessageDrawer,
       handleStatusMenuClick,
+      hasPermission,
     };
   },
 });

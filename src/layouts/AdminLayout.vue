@@ -17,25 +17,34 @@
             <span>Dashboard</span>
           </a-menu-item>
         </a-typography-link>
-        <a-typography-link href="/farmers">
+        <a-typography-link
+          v-if="hasPermission('farmer-management')"
+          href="/farmers"
+        >
           <a-menu-item key="FarmersList">
             <user-outlined />
             <span>Farmers</span>
           </a-menu-item>
         </a-typography-link>
-        <a-typography-link href="/loans">
+        <a-typography-link
+          v-if="hasPermission('loan-management')"
+          href="/loans"
+        >
           <a-menu-item key="LoansList">
             <transaction-outlined />
             <span>Loans</span>
           </a-menu-item>
         </a-typography-link>
-        <a-typography-link href="/deposits">
+        <a-typography-link
+          v-if="hasPermission('deposit-management')"
+          href="/deposits"
+        >
           <a-menu-item key="DepositsList">
             <money-collect-outlined />
             <span>Deposits</span>
           </a-menu-item>
         </a-typography-link>
-        <a-typography-link href="/admin">
+        <a-typography-link v-if="hasPermission('administration')" href="/admin">
           <a-menu-item key="AdminView">
             <setting-filled />
             <span>Admin</span>
@@ -64,24 +73,10 @@
           <div v-if="collapsed" class="logo in-header"></div>
         </a-space>
 
-        <a-dropdown trigger="click">
-          <div class="flex-row pointer">
-            <a-button shape="circle">
-              <template #icon><user-outlined /></template>
-            </a-button>
-            <span class="userName">User name</span>
-          </div>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item key="0">
-                <a @click="$emit('profile')"> Profile </a>
-              </a-menu-item>
-              <a-menu-item key="1">
-                <a @click="$emit('logout')"> Logout </a>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
+        <a-button type="text" @click="logout">
+          <template #icon><user-outlined /></template>
+          <span class="userName">Logout</span>
+        </a-button>
       </a-layout-header>
       <a-layout-content class="main-content">
         <div class="container">
@@ -128,7 +123,7 @@ export default defineComponent({
     const route = useRoute();
     // const router = useRouter();
 
-    const { logout } = useAuthentication();
+    const { logout, hasPermission } = useAuthentication();
 
     const year = ref<number>(new Date().getFullYear());
     const collapsed = ref<boolean>(false);
@@ -142,6 +137,7 @@ export default defineComponent({
       year,
       collapsed,
       logout,
+      hasPermission,
     };
   },
 });

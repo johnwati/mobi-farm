@@ -50,6 +50,7 @@ const router = createRouter({
           path: "admin",
           name: "AdminView",
           component: () => import("../views/AdminView.vue"),
+          meta: { permissions: "administration" },
         },
         {
           path: "batch_management",
@@ -98,16 +99,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem("access_token");
-  // const role = localStorage.getItem("role") || "user";
+  const roles = localStorage.getItem("roles");
   if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated)
     next({ name: "Login" });
-  // else if (
-  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //   // @ts-ignore
-  //   to.matched.some((record) => record.meta.requiresRole) &&
-  //   !to.meta.requiresRole.includes(role)
-  // )
-  //   next({ name: "Forbidden" });
+  else if (
+    to.matched.some((record) => record.meta.permissions) &&
+    !roles.includes(to.meta.permissions as string)
+  )
+    next({ name: "Forbidden" });
   else next();
   // next();
 });

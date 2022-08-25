@@ -1,6 +1,7 @@
 import $http from "@/plugins/axios";
 import type { AxiosError } from "axios";
 import { defineStore } from "pinia";
+import jwt_decode from "jwt-decode";
 
 export const useAuthenticationStore = defineStore({
   id: "authentication",
@@ -25,6 +26,12 @@ export const useAuthenticationStore = defineStore({
         });
         const { access_token } = response.data;
         localStorage.setItem("access_token", access_token);
+        const decoded = jwt_decode(access_token) as any;
+        localStorage.setItem("decoded", JSON.stringify(decoded));
+        localStorage.setItem(
+          "roles",
+          JSON.stringify(decoded.realm_access.roles)
+        );
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

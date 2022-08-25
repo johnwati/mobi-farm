@@ -16,14 +16,22 @@
           class="list-page-header"
         >
           <template #extra>
-            <a-button type="primary" @click="openForm('limit', false)">
+            <a-button
+              v-if="hasPermission('farmer-management')"
+              type="primary"
+              @click="openForm('limit', false)"
+            >
               <template #icon>
                 <PlusOutlined />
               </template>
 
               Add Limit
             </a-button>
-            <a-button type="primary" @click="openForm('upload', false)">
+            <a-button
+              v-if="hasPermission('farmer-management')"
+              type="primary"
+              @click="openForm('upload', false)"
+            >
               <template #icon>
                 <PlusOutlined />
               </template>
@@ -60,6 +68,7 @@
 
               Add Products
             </a-button>
+            <report-export-button reportType="Loan_Products" />
           </template>
         </a-page-header>
 
@@ -90,6 +99,7 @@
 
               Add Agro-Dealers
             </a-button>
+            <report-export-button reportType="Agrodealers" />
           </template>
         </a-page-header>
         <agro-dealers-table
@@ -235,9 +245,12 @@ import {
   TenureTable,
   // ItemsTable,
 } from "@/components/Tables";
-import { useAdmin, useFarmers, useLoans } from "@/composables";
+import { useAdmin, useAppAuthentication, useFarmers, useLoans } from "@/composables";
+import ReportExportButton from "@/components/ExportButton.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
+import type { MenuProps } from "ant-design-vue";
 import { defineComponent, onMounted, ref } from "vue";
+
 export default defineComponent({
   name: "AdminView",
   components: {
@@ -249,10 +262,12 @@ export default defineComponent({
     ImportFarmerLimits,
     LoanFeesTable,
     TenureTable,
+    ReportExportButton,
     // ItemsTable,
   },
   setup() {
     const { loans, loanCount, loanStatusList } = useLoans();
+    const { hasPermission } = useAppAuthentication()
     const {
       farmerLimits,
       farmerLimitsCount,
@@ -278,7 +293,7 @@ export default defineComponent({
     } = useAdmin();
     const loading = ref<boolean>(false);
 
-    const activeKey = ref("1");
+    const activeKey = ref("3");
 
     const formVisible = ref<boolean>(false);
 
@@ -352,6 +367,10 @@ export default defineComponent({
       formVisible.value = true;
     };
 
+    const handleMenuClick: MenuProps["onClick"] = (e) => {
+      console.log("click", e);
+    };
+
     return {
       loans,
       loanCount,
@@ -397,6 +416,8 @@ export default defineComponent({
       openForm,
       afterVisibleChange,
       closeDrawer,
+      handleMenuClick,
+      hasPermission,
     };
   },
 });
