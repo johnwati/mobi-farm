@@ -1,5 +1,5 @@
 <template>
-  <DataGrid
+  <NewDataGrid
     :label="label"
     :total="total"
     :data-source="dataSource"
@@ -10,16 +10,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRoute } from "vue-router";
 
-import DataGrid from "../DataGrid.vue";
+import NewDataGrid from "../NewDataGrid.vue";
 
 export default defineComponent({
   name: "DepositsTable",
 
   components: {
-    DataGrid,
+    NewDataGrid,
   },
 
   props: {
@@ -47,130 +47,90 @@ export default defineComponent({
   setup() {
     const route = useRoute();
 
-    const columns = ref(
-      route.name === "DepositsList"
-        ? [
-            {
-              title: "Transaction Code",
-              dataIndex: "transaction_id",
-              key: "transaction_id",
-              filterKey: "transaction_id_contains",
-              // slots: {
-              //   filterIcon: "filterIcon",
-              //   filterDropdown: "filterDropdown",
-              // },
-              // sorter: true,
-            },
-            {
-              title: "Farmer Name",
-              dataIndex: ["farmer", "full_names"],
-              key: ["farmer", "full_names"],
-              filterKey: "farmer_names_contains",
-              // slots: {
-              //   filterIcon: "filterIcon",
-              //   filterDropdown: "filterDropdown",
-              // },
-              // sorter: true,
-            },
-            {
-              title: "Debit",
-              dataIndex: "debit",
-              key: "debit",
-              filterKey: "debit_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "currency",
-              },
-              // sorter: true,
-            },
-            {
-              title: "Credit",
-              dataIndex: "credit",
-              key: "credit",
-              filterKey: "credit_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "currency",
-              },
-              // sorter: true,
-            },
-            {
-              title: "Note",
-              dataIndex: "note",
-              key: "note",
-              filterKey: "note_contains",
-            },
-            {
-              title: "Time",
-              dataIndex: "created_on",
-              key: "created_on",
-              filterKey: "created_on_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "dateTime",
-              },
-              // sorter: true,
-            },
-          ]
-        : [
-            {
-              title: "Transaction Code",
-              dataIndex: "transaction_id",
-              key: "transaction_id",
-              filterKey: "transaction_id_contains",
-              // slots: {
-              //   filterIcon: "filterIcon",
-              //   filterDropdown: "filterDropdown",
-              // },
-              // sorter: true,
-            },
-            {
-              title: "Debit",
-              dataIndex: "debit",
-              key: "debit",
-              filterKey: "debit_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "currency",
-              },
-              sorter: true,
-            },
-            {
-              title: "Credit",
-              dataIndex: "credit",
-              key: "credit",
-              filterKey: "credit_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "currency",
-              },
-              sorter: true,
-            },
-            {
-              title: "Note",
-              dataIndex: "note",
-              key: "note",
-              filterKey: "note_contains",
-            },
-            {
-              title: "Time",
-              dataIndex: "created_on",
-              key: "created_on",
-              filterKey: "created_on_contains",
-              slots: {
-                //   filterIcon: "filterIcon",
-                //   filterDropdown: "filterDropdown",
-                customRender: "dateTime",
-              },
-              // sorter: true,
-            },
-          ]
-    );
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      const farmerColumns = [
+        {
+          title: "Transaction Code",
+          dataIndex: "transaction_id",
+          key: "transaction_id",
+          filterKey: "transaction_id",
+          filteredValue: filtered.transaction_id,
+          onFilter: (value: string, record) =>
+            record.transaction_id.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+          // sorter: true,
+        },
+        {
+          title: "Debit",
+          dataIndex: "debit",
+          key: "debit",
+          filterKey: "debit",
+          slots: {
+            //   filterIcon: "filterIcon",
+            //   filterDropdown: "filterDropdown",
+            customRender: "currency",
+          },
+          sorter: true,
+        },
+        {
+          title: "Credit",
+          dataIndex: "credit",
+          key: "credit",
+          filterKey: "credit",
+          sorter: (a, b) => a.credit.length - b.credit.length,
+          sortOrder: sorted.columnKey === "credit" && sorted.order,
+          slots: {
+            //   filterIcon: "filterIcon",
+            //   filterDropdown: "filterDropdown",
+            customRender: "currency",
+          },
+        },
+        {
+          title: "Note",
+          dataIndex: "note",
+          key: "note",
+          filterKey: "note",
+        },
+        {
+          title: "Time",
+          dataIndex: "created_on",
+          key: "created_on",
+          filterKey: "created_on",
+          slots: {
+            //   filterIcon: "filterIcon",
+            //   filterDropdown: "filterDropdown",
+            customRender: "dateTime",
+          },
+          // sorter: true,
+        },
+      ];
+
+      if (route.name === "DepositsList") {
+        farmerColumns.splice(1, 0, {
+          title: "Farmer Name",
+          dataIndex: "farmer_names",
+          key: "farmer_names",
+          filterKey: "farmer_names",
+          // slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // },
+          // sorter: true,
+        });
+        return farmerColumns;
+      } else {
+        return farmerColumns;
+      }
+    });
 
     return {
       columns,

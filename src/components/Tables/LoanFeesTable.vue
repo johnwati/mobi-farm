@@ -1,5 +1,5 @@
 <template>
-  <DataGrid
+  <NewDataGrid
     :label="label"
     :total="total"
     :data-source="dataSource"
@@ -27,16 +27,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import DataGrid from "@/components/DataGrid.vue";
 import { LoanFeesForm } from "@/components/Forms";
+import NewDataGrid from "@/components/NewDataGrid.vue";
 import { useAdmin } from "@/composables";
+import { computed, defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "LoanFeesTable",
 
   components: {
-    DataGrid,
+    NewDataGrid,
     LoanFeesForm,
   },
 
@@ -65,85 +65,104 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
-    const columns = ref([
-      {
-        title: "Fee Name",
-        dataIndex: "fee_name",
-        key: "fee_name",
-        filterKey: "fee_name_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      return [
+        {
+          title: "Fee Name",
+          dataIndex: "fee_name",
+          key: "fee_name",
+          filterKey: "fee_name",
+          filteredValue: filtered.fee_name,
+          onFilter: (value: string, record) =>
+            `${record.fee_name}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Interest Rate",
-        dataIndex: "rate",
-        key: "rate",
-        filterKey: "rate_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          customRender: "percentage",
+        {
+          title: "Interest Rate",
+          dataIndex: "rate",
+          key: "rate",
+          filterKey: "rate",
+          filteredValue: filtered.rate,
+          onFilter: (value: string, record) =>
+            `${record.rate}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+            customRender: "percentage",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Fee Type",
-        dataIndex: "loan_fee_type",
-        key: "loan_fee_type",
-        filterKey: "loan_fee_type_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Fee Type",
+          dataIndex: "loan_fee_type",
+          key: "loan_fee_type",
+          filterKey: "loan_fee_type",
+          filteredValue: filtered.loan_fee_type,
+          filters: [
+            { text: "PERCENTAGE", value: "PERCENTAGE" },
+            { text: "FIXED", value: "FIXED" },
+          ],
+          onFilter: (value: string, record) =>
+            `${record.loan_fee_type}`
+              .toLowerCase()
+              .includes(value.toLowerCase()),
         },
-        // sorter: true,
-      },
-      {
-        title: "Duration",
-        dataIndex: "duration",
-        key: "duration",
-        filterKey: "duration_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Duration",
+          dataIndex: "duration",
+          key: "duration",
+          filterKey: "duration",
+          filteredValue: filtered.duration,
+          filters: [
+            { text: "Monthly", value: "Monthly" },
+            { text: "Annually", value: "Annually" },
+          ],
+          onFilter: (value: string, record) =>
+            `${record.duration}`.toLowerCase().includes(value.toLowerCase()),
         },
-        // sorter: true,
-      },
-      {
-        title: "Loan Product",
-        dataIndex: "product_name",
-        key: "product_name",
-        filterKey: "product_name_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Loan Product",
+          dataIndex: "product_name",
+          key: "product_name",
+          filterKey: "product_name",
+          filteredValue: filtered.product_name,
+          onFilter: (value: string, record) =>
+            `${record.product_name}`
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        filterKey: "status_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "boolean",
+        {
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          filterKey: "status",
+          filteredValue: filtered.status,
+          filters: [
+            { text: "ACTIVE", value: "ACTIVE" },
+            { text: "INACTIVE", value: "INACTIVE" },
+          ],
+          onFilter: (value: string, record) =>
+            `${record.status}`.toLowerCase().includes(value.toLowerCase()),
         },
-        // sorter: true,
-      },
-      {
-        title: "Action",
-        key: "action",
-        slots: { customRender: "editAction" },
-      },
-    ]);
+        {
+          title: "Action",
+          key: "action",
+          slots: { customRender: "editAction" },
+        },
+      ];
+    });
 
     const isEditing = ref<boolean>(false);
 

@@ -1,5 +1,5 @@
 <template>
-  <DataGrid
+  <NewDataGrid
     :label="label"
     :total="total"
     :data-source="dataSource"
@@ -7,6 +7,7 @@
     :loading="loading"
     :rowExpandable="false"
     @edit="editCurrency"
+    @handle-table-change="handleTableChange"
   />
 
   <a-drawer
@@ -27,16 +28,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import DataGrid from "@/components/DataGrid.vue";
 import { CurrencyForm } from "@/components/Forms";
+import NewDataGrid from "@/components/NewDataGrid.vue";
 import { useAdmin } from "@/composables";
+import { computed } from "@vue/reactivity";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "CurrenciesTable",
 
   components: {
-    DataGrid,
+    NewDataGrid,
     CurrencyForm,
   },
 
@@ -65,72 +67,84 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
-    const columns = ref([
-      {
-        title: "Symbol",
-        dataIndex: "symbol",
-        key: "symbol",
-        filterKey: "symbol_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      return [
+        {
+          title: "Symbol",
+          dataIndex: "symbol",
+          key: "symbol",
+          filterKey: "symbol",
+          filteredValue: filtered.symbol,
+          onFilter: (value: string, record) =>
+            `${record.symbol}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Currency Name",
-        dataIndex: "name",
-        key: "name",
-        filterKey: "name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Decimal places",
-        dataIndex: "decimalPlaces",
-        key: "decimalPlaces",
-        filterKey: "decimalPlaces_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Currency Name",
+          dataIndex: "name",
+          key: "name",
+          filterKey: "name",
+          filteredValue: filtered.name,
+          onFilter: (value: string, record) =>
+            `${record.name}`.toLowerCase().includes(value.toLowerCase()),
+          // onFilter: (value: string, record) => console.log(record),
+          // sorter: (a, b) => a.name.length - b.name.length,
+          // sortOrder: sorted.columnKey === "name" && sorted.order,
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+          // customFilterDropdown: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Format",
-        dataIndex: "format",
-        key: "format",
-        filterKey: "format_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Decimal places",
+          dataIndex: "decimalPlaces",
+          key: "decimalPlaces",
         },
-        // sorter: true,
-      },
-      {
-        title: "Active",
-        dataIndex: "active",
-        key: "active",
-        filterKey: "active_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          customRender: "boolean",
+        {
+          title: "Format",
+          dataIndex: "format",
+          key: "format",
+          filterKey: "format",
+          filteredValue: filtered.format,
+          onFilter: (value: string, record) =>
+            `${record.format}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Action",
-        key: "action",
-        slots: { customRender: "editAction" },
-      },
-    ]);
+        {
+          title: "Active",
+          dataIndex: "active",
+          key: "active",
+          filterKey: "active",
+          filteredValue: filtered.active,
+          filters: [
+            { text: "Yes", value: true },
+            { text: "No", value: false },
+          ],
+          onFilter: (value, record) => record.active === value,
+          slots: {
+            customRender: "boolean",
+          },
+        },
+        {
+          title: "Action",
+          key: "action",
+          slots: { customRender: "editAction" },
+        },
+      ];
+    });
 
     const isEditing = ref<boolean>(false);
 
@@ -155,6 +169,11 @@ export default defineComponent({
       formVisible.value = false;
     };
 
+    const handleTableChange = ({ filteredInfo, sortedInfo }) => {
+      filteredInfo.value = filteredInfo;
+      sortedInfo.value = sortedInfo;
+    };
+
     const afterVisibleChange = (status: boolean) => {
       if (!status) {
         currencyForm.value?.reset();
@@ -170,6 +189,7 @@ export default defineComponent({
       editCurrency,
       closeDrawer,
       afterVisibleChange,
+      handleTableChange,
     };
   },
 });

@@ -1,5 +1,5 @@
 <template>
-  <DataGrid
+  <NewDataGrid
     :label="label"
     :total="total"
     :data-source="dataSource"
@@ -27,8 +27,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import DataGrid from "@/components/DataGrid.vue";
+import { computed, defineComponent, ref } from "vue";
+import NewDataGrid from "@/components/NewDataGrid.vue";
 import { TenureForm } from "@/components/Forms";
 import { useAdmin } from "@/composables";
 
@@ -36,7 +36,7 @@ export default defineComponent({
   name: "TenureTable",
 
   components: {
-    DataGrid,
+    NewDataGrid,
     TenureForm,
   },
 
@@ -65,85 +65,80 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
-    const columns = ref([
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        filterKey: "name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // customRender: "currency",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Min Amount",
-        dataIndex: "min_amount",
-        key: "min_amount",
-        filterKey: "min_amount_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "percentage",
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      return [
+        {
+          title: "Name",
+          dataIndex: "name",
+          key: "name",
+          filterKey: "name",
+          filteredValue: filtered.name,
+          onFilter: (value: string, record) =>
+            `${record.name}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Max Amount",
-        dataIndex: "max_amount",
-        key: "max_amount",
-        filterKey: "max_amount_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Min Amount",
+          dataIndex: "min_amount",
+          key: "min_amount",
+          filterKey: "min_amount",
         },
-        // sorter: true,
-      },
-      {
-        title: "Repayment Duration",
-        dataIndex: "repayment_duration",
-        key: "repayment_duration",
-        filterKey: "repayment_duration_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Max Amount",
+          dataIndex: "max_amount",
+          key: "max_amount",
+          filterKey: "max_amount",
         },
-        // sorter: true,
-      },
-      {
-        title: "Code",
-        dataIndex: "code",
-        key: "code",
-        filterKey: "code_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Repayment Duration",
+          dataIndex: "repayment_duration",
+          key: "repayment_duration",
+          filterKey: "repayment_duration",
         },
-        // sorter: true,
-      },
-      {
-        title: "Active",
-        dataIndex: "active",
-        key: "active",
-        filterKey: "active_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          customRender: "boolean",
+        {
+          title: "Code",
+          dataIndex: "code",
+          key: "code",
+          filterKey: "code",
+          filteredValue: filtered.code,
+          onFilter: (value: string, record) =>
+            `${record.code}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Action",
-        key: "action",
-        slots: { customRender: "editAction" },
-      },
-    ]);
+        {
+          title: "Active",
+          dataIndex: "active",
+          key: "active",
+          filterKey: "active",
+          filteredValue: filtered.active,
+          filters: [
+            { text: "Yes", value: true },
+            { text: "No", value: false },
+          ],
+          onFilter: (value, record) => record.active === value,
+          slots: {
+            customRender: "boolean",
+          },
+        },
+        {
+          title: "Action",
+          key: "action",
+          slots: { customRender: "editAction" },
+        },
+      ];
+    });
 
     const isEditing = ref<boolean>(false);
 

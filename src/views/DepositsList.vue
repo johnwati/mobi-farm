@@ -13,6 +13,9 @@
       :ghost="false"
       class="list-page-header"
     >
+      <template #extra>
+        <report-export-button reportType="Transactions" />
+      </template>
     </a-page-header>
 
     <deposits-table
@@ -27,11 +30,13 @@
 <script lang="ts">
 import DepositsTable from "@/components/Tables/DepositsTable.vue";
 import { useDeposits } from "@/composables";
+import ReportExportButton from "@/components/ExportButton.vue";
 import { defineComponent, onMounted, ref } from "vue";
 export default defineComponent({
   name: "DepositsList",
   components: {
     DepositsTable,
+    ReportExportButton,
   },
   setup() {
     const loading = ref<boolean>(false);

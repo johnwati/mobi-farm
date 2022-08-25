@@ -52,6 +52,9 @@
                       {{ farmer.full_names }}
                     </a-typography-title>
                     <a-space direction="vertical">
+                      <a-typography-text type="secondary">
+                        {{ farmer.phone_number }}
+                      </a-typography-text>
                       <a-badge v-if="farmer.email_verified" text="verified">
                         <a-typography-text type="secondary">
                           {{ farmer.email }}
@@ -59,9 +62,6 @@
                       </a-badge>
                       <a-typography-text v-else type="secondary">
                         {{ farmer.email }}
-                      </a-typography-text>
-                      <a-typography-text type="secondary">
-                        {{ farmer.phone_number }}
                       </a-typography-text>
                     </a-space>
                   </a-col>
@@ -72,7 +72,10 @@
                     <a-tag color="#ff6700">{{ farmer.status }}</a-tag>
                   </a-col>
                 </a-row>
-                <a-col style="padding: 10px">
+                <a-col
+                  v-if="hasPermission('farmer-management')"
+                  style="padding: 10px"
+                >
                   <a-button
                     style="margin: 5px"
                     type="primary"
@@ -354,7 +357,7 @@
         </a-row>
       </a-tab-pane>
       <a-tab-pane key="2" tab="Loans" force-render>
-        <DataGrid
+        <NewDataGrid
           label="farmer"
           :total="farmerLoansCount"
           :data-source="farmerLoans"
@@ -434,24 +437,24 @@
 </template>
 
 <script lang="ts">
-import DataGrid from "@/components/DataGrid.vue";
+import NewDataGrid from "@/components/NewDataGrid.vue";
 import { FarmerLimitForm, FarmersForm } from "@/components/Forms";
 import DepositsTable from "@/components/Tables/DepositsTable.vue";
 import FarmerLimitsTable from "@/components/Tables/FarmerLimitsTable.vue";
-import { useFarmers, useLoans } from "@/composables";
+import { useAppAuthentication, useFarmers, useLoans } from "@/composables";
 import {
   EditFilled,
   UserOutlined,
   CheckOutlined,
   CloseOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "FarmerView",
   components: {
-    DataGrid,
+    NewDataGrid,
     UserOutlined,
     EditFilled,
     FarmersForm,
@@ -463,6 +466,8 @@ export default defineComponent({
   },
   setup() {
     const { loans, loanCount, loanStatusList } = useLoans();
+
+    const { hasPermission } = useAppAuthentication();
 
     const {
       farmer,
@@ -493,209 +498,135 @@ export default defineComponent({
 
     const farmersForm = ref<InstanceType<typeof FarmersForm>>();
 
-    const columns = ref([
-      {
-        // title: "Photo",
-        dataIndex: "photo",
-        key: "photo",
-        slots: {
-          customRender: "photo",
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      return [
+        {
+          dataIndex: "photo",
+          key: "photo",
+          slots: {
+            customRender: "photo",
+          },
         },
-      },
-      {
-        title: "Applicant Name",
-        dataIndex: "applicant_name",
-        key: "applicant_name",
-        filterKey: "applicant_name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Product Name",
-        dataIndex: "product_name",
-        key: "product_name",
-        filterKey: "product_name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Applicant Code",
-        dataIndex: "applicant_code",
-        key: "applicant_code",
-        filterKey: "applicant_code_contains",
-        slots: {
-          filterIcon: "filterIcon",
-          filterDropdown: "filterDropdown",
+        {
+          title: "Applicant Name",
+          dataIndex: "applicant_name",
+          key: "applicant_name",
+          filterKey: "applicant_name",
+          filteredValue: filtered.applicant_name,
+          onFilter: (value: string, record) =>
+            `${record.applicant_name}`
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+            customRender: "applicantName",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Code",
-        dataIndex: "code",
-        key: "code",
-        filterKey: "code_contains",
-        slots: {
-          filterIcon: "filterIcon",
-          filterDropdown: "filterDropdown",
+        {
+          title: "Product Name",
+          dataIndex: "product_name",
+          key: "product_name",
+          filterKey: "product_name",
+          filteredValue: filtered.product_name,
+          onFilter: (value: string, record) =>
+            `${record.product_name}`
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Loan Status",
-        dataIndex: "status",
-        key: "status",
-        filterKey: "status_contains",
-        filters: loanStatusList,
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Interest Rate (%)",
-        dataIndex: "interest_rate",
-        key: "interest_rate",
-        filterKey: "interest_rate_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Requested Amount",
-        dataIndex: "requested_amount",
-        key: "requested_amount",
-        filterKey: "requested_amount_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Loan Payment Status",
-        dataIndex: "payment_status",
-        key: "payment_status",
-        //   filterKey: "payment_status_contains",
-        //   slots: {
-        //     filterIcon: "filterIcon",
-        //     filterDropdown: "filterDropdown",
-        //   },
-        //   sorter: true,
-      },
-      {
-        title: "Agrodealer Code",
-        dataIndex: "agrodealer_code",
-        key: "agrodealer_code",
-        // filterKey: "agrodealer_code_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      // {
-      //   title: "Loan Product Code",
-      //   dataIndex: "loan_product_code",
-      //   key: "loan_product_code",
-      //   filterKey: "loan_product_code_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Product Code",
-      //   dataIndex: "product_code",
-      //   key: "product_code",
-      //   filterKey: "product_code_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Balance",
-      //   dataIndex: "balance",
-      //   key: "balance",
-      //   filterKey: "balance_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Paid",
-      //   dataIndex: "paid",
-      //   key: "paid",
-      //   filterKey: "paid_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Expected completion date.",
-      //   dataIndex: "expected_completion_date",
-      //   key: "expected_completion_date",
-      //   filterKey: "expected_completion_date_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Applicant Code",
-      //   dataIndex: "applicant_code",
-      //   key: "applicant_code",
-      //   filterKey: "applicant_code_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Principal Amount",
-      //   dataIndex: "principal_amount",
-      //   key: "principal_amount",
-      //   filterKey: "principal_amount_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Total Amount",
-      //   dataIndex: "total_amount",
-      //   key: "total_amount",
-      //   filterKey: "total_amount_contains",
-      //   slots: {
-      //     filterIcon: "filterIcon",
-      //     filterDropdown: "filterDropdown",
-      //   },
-      //   sorter: true,
-      // },
-      // {
-      //   title: "Action",
-      //   key: "action",
-      //   slots: { customRender: "action" },
-      // },
-    ]);
+        {
+          title: "Applicant Code",
+          dataIndex: "applicant_code",
+          key: "applicant_code",
+          filterKey: "applicant_code",
+          filteredValue: filtered.applicant_code,
+          onFilter: (value: string, record) =>
+            `${record.applicant_code}`
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "Code",
+          dataIndex: "code",
+          key: "code",
+          filterKey: "code",
+          filteredValue: filtered.code,
+          onFilter: (value: string, record) =>
+            `${record.code}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "Loan Status",
+          dataIndex: "status",
+          key: "status",
+          filterKey: "status",
+          filteredValue: filtered.status,
+          filters: loanStatusList.value,
+          onFilter: (value: string, record) =>
+            `${record.status}`.toLowerCase().includes(value.toLowerCase()),
+          // slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // },
+        },
+        {
+          title: "Interest Rate (%)",
+          dataIndex: "interest_rate",
+          key: "interest_rate",
+          filterKey: "interest_rate",
+          // slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // },
+          // sorter: true,
+        },
+        {
+          title: "Requested Amount",
+          dataIndex: "requested_amount",
+          key: "requested_amount",
+          filterKey: "requested_amount",
+        },
+        {
+          title: "Loan Payment Status",
+          dataIndex: "payment_status",
+          key: "payment_status",
+          //   filterKey: "payment_status",
+          //   slots: {
+          //     filterIcon: "filterIcon",
+          //     filterDropdown: "filterDropdown",
+          //   },
+          //   sorter: true,
+        },
+        {
+          title: "Agrodealer Code",
+          dataIndex: "agrodealer_code",
+          key: "agrodealer_code",
+          // filterKey: "agrodealer_code",
+          // slots: {
+          //   filterIcon: "filterIcon",
+          //   filterDropdown: "filterDropdown",
+          // },
+          // sorter: true,
+        },
+      ];
+    });
 
     onMounted(async () => {
       loading.value = true;
@@ -703,7 +634,6 @@ export default defineComponent({
         const data = await fetchFarmer(
           parseInt(route.params.farmerId as string)
         );
-        console.log("mounting", farmer);
         await fetchDeposits(data.id as number);
         await fetchLoanPayments(data.id as number);
         await fetchFarmerLoanLimits(data.id as number);
@@ -765,6 +695,7 @@ export default defineComponent({
       afterVisibleChange,
       openEditForm,
       closeDrawer,
+      hasPermission,
     };
   },
 });

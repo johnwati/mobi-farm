@@ -1,5 +1,5 @@
 <template>
-  <DataGrid
+  <NewDataGrid
     :label="label"
     :total="total"
     :data-source="dataSource"
@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import DataGrid from "@/components/DataGrid.vue";
+import { computed, defineComponent, ref } from "vue";
+import NewDataGrid from "@/components/NewDataGrid.vue";
 import { AgroDealersForm } from "@/components/Forms";
 import { useAdmin } from "@/composables";
 
@@ -37,7 +37,7 @@ export default defineComponent({
   name: "AgroDealersTable",
 
   components: {
-    DataGrid,
+    NewDataGrid,
     AgroDealersForm,
   },
 
@@ -66,152 +66,188 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
-    const columns = ref([
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        filterKey: "name_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Code",
-        dataIndex: "code",
-        key: "code",
-        filterKey: "code_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Email",
-        dataIndex: "email",
-        key: "email",
-        filterKey: "email_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+    const filteredInfo = ref();
+    const sortedInfo = ref();
+
+    const columns = computed(() => {
+      const filtered = filteredInfo.value || {};
+      const sorted = sortedInfo.value || {};
+
+      return [
+        {
+          title: "Name",
+          dataIndex: "name",
+          key: "name",
+          filterKey: "name",
+          filteredValue: filtered.name,
+          onFilter: (value: string, record) =>
+            `${record.name}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Phone Number",
-        dataIndex: "phone",
-        key: "phone",
-        filterKey: "phone_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Type",
-        dataIndex: "type",
-        key: "type",
-        filterKey: "type_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Code",
+          dataIndex: "code",
+          key: "code",
+          filterKey: "code",
+          filteredValue: filtered.code,
+          onFilter: (value: string, record) =>
+            `${record.code}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Tax Number",
-        dataIndex: "tax_number",
-        key: "tax_number",
-        filterKey: "tax_number_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Email",
+          dataIndex: "email",
+          key: "email",
+          filterKey: "email",
+          filteredValue: filtered.email,
+          onFilter: (value: string, record) =>
+            `${record.email}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+            // customRender: "currency",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Active",
-        dataIndex: "active",
-        key: "active",
-        filterKey: "active_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          customRender: "boolean",
+        {
+          title: "Phone Number",
+          dataIndex: "phone",
+          key: "phone",
+          filterKey: "phone",
+          filteredValue: filtered.phone,
+          onFilter: (value: string, record) =>
+            `${record.phone}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Country",
-        dataIndex: "country",
-        key: "country",
-        filterKey: "country_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Type",
+          dataIndex: "type",
+          key: "type",
+          filterKey: "type",
+          filteredValue: filtered.type,
+          onFilter: (value: string, record) =>
+            `${record.type}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+            // customRender: "currency",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "County",
-        dataIndex: "county",
-        key: "county",
-        filterKey: "county_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Tax Number",
+          dataIndex: "tax_number",
+          key: "tax_number",
+          filterKey: "tax_number",
+          filteredValue: filtered.tax_number,
+          onFilter: (value: string, record) =>
+            `${record.tax_number}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+            // customRender: "currency",
+          },
+          // sorter: true,
         },
-        // sorter: true,
-      },
-      {
-        title: "Currency",
-        dataIndex: "currency",
-        key: "currency",
-        filterKey: "currency_contains",
-        slots: {
-          //   filterIcon: "filterIcon",
-          //   filterDropdown: "filterDropdown",
-          // customRender: "currency",
+        {
+          title: "Active",
+          dataIndex: "active",
+          key: "active",
+          filterKey: "active",
+          filteredValue: filtered.active,
+          filters: [
+            { text: "Yes", value: true },
+            { text: "No", value: false },
+          ],
+          onFilter: (value, record) => record.active === value,
+          slots: {
+            customRender: "boolean",
+          },
         },
-        // sorter: true,
-      },
-      {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-        filterKey: "address_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        filterKey: "status_contains",
-        // slots: {
-        //   filterIcon: "filterIcon",
-        //   filterDropdown: "filterDropdown",
-        // },
-        // sorter: true,
-      },
-      {
-        title: "Action",
-        key: "action",
-        slots: { customRender: "action" },
-      },
-    ]);
+        {
+          title: "Country",
+          dataIndex: "country",
+          key: "country",
+          filterKey: "country",
+          filteredValue: filtered.country,
+          onFilter: (value: string, record) =>
+            `${record.country}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "County",
+          dataIndex: "county",
+          key: "county",
+          filterKey: "county",
+          filteredValue: filtered.county,
+          onFilter: (value: string, record) =>
+            `${record.county}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "Currency",
+          dataIndex: "currency",
+          key: "currency",
+          filterKey: "currency",
+          filteredValue: filtered.currency,
+          onFilter: (value: string, record) =>
+            `${record.currency}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "Address",
+          dataIndex: "address",
+          key: "address",
+          filterKey: "address",
+          filteredValue: filtered.address,
+          onFilter: (value: string, record) =>
+            `${record.address}`.toLowerCase().includes(value.toLowerCase()),
+          slots: {
+            filterIcon: "filterIcon",
+            filterDropdown: "filterDropdown",
+          },
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          filterKey: "status",
+          filteredValue: filtered.status,
+          filters: [
+            { text: "ACTIVE", value: "ACTIVE" },
+            { text: "INACTIVE", value: "INACTIVE" },
+          ],
+          onFilter: (value: string, record) =>
+            `${record.status}`.toLowerCase().includes(value.toLowerCase()),
+        },
+        {
+          title: "Action",
+          key: "action",
+          slots: { customRender: "action" },
+        },
+      ];
+    });
 
     const isEditing = ref<boolean>(false);
 
