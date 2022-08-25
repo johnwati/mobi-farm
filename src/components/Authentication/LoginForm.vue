@@ -1,51 +1,53 @@
 <template>
-  <a-form
-    :model="formState"
-    name="normal_login"
-    class="login-form"
-    @finish="onFinish"
-    @finishFailed="onFinishFailed"
-  >
-    <a-form-item
-      label="Username"
-      name="username"
-      :rules="[{ required: true, message: 'Please input your username!' }]"
+  <a-spin :spinning="loading">
+    <a-form
+      :model="formState"
+      name="normal_login"
+      class="login-form"
+      @finish="onFinish"
+      @finishFailed="onFinishFailed"
     >
-      <a-input v-model:value="formState.username">
-        <template #prefix>
-          <user-outlined class="site-form-item-icon" />
-        </template>
-      </a-input>
-    </a-form-item>
-
-    <a-form-item
-      label="Password"
-      name="password"
-      :rules="[{ required: true, message: 'Please input your password!' }]"
-    >
-      <a-input-password v-model:value="formState.password">
-        <template #prefix>
-          <LockOutlined class="site-form-item-icon" />
-        </template>
-      </a-input-password>
-    </a-form-item>
-
-    <a-form-item>
-      <a-button
-        :disabled="disabled"
-        type="primary"
-        html-type="submit"
-        class="login-form-button"
+      <a-form-item
+        label="Username"
+        name="username"
+        :rules="[{ required: true, message: 'Please input your username!' }]"
       >
-        Log in
-      </a-button>
-      Or
-      <a href="">register now!</a>
-    </a-form-item>
-  </a-form>
+        <a-input v-model:value="formState.username">
+          <template #prefix>
+            <user-outlined class="site-form-item-icon" />
+          </template>
+        </a-input>
+      </a-form-item>
+
+      <a-form-item
+        label="Password"
+        name="password"
+        :rules="[{ required: true, message: 'Please input your password!' }]"
+      >
+        <a-input-password v-model:value="formState.password">
+          <template #prefix>
+            <LockOutlined class="site-form-item-icon" />
+          </template>
+        </a-input-password>
+      </a-form-item>
+
+      <a-form-item>
+        <a-button
+          :disabled="disabled"
+          type="primary"
+          html-type="submit"
+          class="login-form-button"
+        >
+          Log in
+        </a-button>
+        Or
+        <a href="">register now!</a>
+      </a-form-item>
+    </a-form>
+  </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, computed } from "vue";
+import { defineComponent, reactive, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import useAppAuthentication from "@/composables/useAppAuthentication";
@@ -69,8 +71,11 @@ export default defineComponent({
       password: "",
       remember: true,
     });
+
+    const loading = ref<boolean>(false);
     const onFinish = async (values: ILogin) => {
       console.log("Success:", values);
+      loading.value = true;
       try {
         const credentials = {
           username: values.username,
@@ -97,6 +102,7 @@ export default defineComponent({
       onFinish,
       onFinishFailed,
       disabled,
+      loading,
     };
   },
 });

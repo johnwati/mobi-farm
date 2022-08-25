@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import useDashboard from "@/composables/useDashboard";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, computed, ref, watch } from "vue";
 
 export default defineComponent({
   setup() {
@@ -99,7 +99,9 @@ export default defineComponent({
     const categories = statusValueSeries.value.map((i) =>
       i.name.replace("_", " ")
     );
-    const loanProducts = loanProductSeries.value.map((i) => i.name);
+    const loanProducts = computed(() =>
+      loanProductSeries.value.map((i) => i.name)
+    );
 
     const leadsBySourceSeries = {
       chart: {
@@ -110,7 +112,6 @@ export default defineComponent({
         },
       },
       title: {
-        // text: "Loans by Status",
         text: null,
       },
       loading: loading,
@@ -144,31 +145,24 @@ export default defineComponent({
           fontFamily: "Open Sans",
         },
       },
-
       title: {
-        // text: "Loan value by Status",
         text: null,
       },
-
+      loading: loading,
       credits: {
         enabled: false,
       },
-
       colors: ["#3B90D3", "#1E3D73"],
-
       xAxis: {
         categories,
       },
-
       yAxis: {
         allowDecimals: false,
       },
-
       tooltip: {
         pointFormat: "{series.name}: <b>Ksh. {point.y:,.2f}</b> <br>",
         shared: true,
       },
-
       series: [
         {
           name: "Value",
@@ -185,31 +179,25 @@ export default defineComponent({
           fontFamily: "Open Sans",
         },
       },
-
       title: {
         // text: "Loan Products Value",
         text: null,
       },
-
+      loading: loading,
       credits: {
         enabled: false,
       },
-
       colors: ["#3B90D3", "#1E3D73"],
-
       xAxis: {
-        categories: loanProducts,
+        categories: loanProducts.value,
       },
-
       yAxis: {
         allowDecimals: false,
       },
-
       tooltip: {
         pointFormat: "{series.name}: <b>Ksh. {point.y:,.2f}</b> <br>",
         shared: true,
       },
-
       series: [
         {
           name: "Value",
@@ -229,6 +217,38 @@ export default defineComponent({
         loading.value = false;
       }
     });
+
+    watch(
+      () => loanProducts.value,
+      (newVal) => {
+        loanProductBar.xAxis.categories = newVal;
+      },
+      { immediate: true, deep: true }
+    );
+
+    watch(
+      () => loanProductSeries.value,
+      (newVal) => {
+        loanProductBar.series[0].data = newVal;
+      },
+      { immediate: false, deep: true }
+    );
+
+    watch(
+      () => statusCountSeries.value,
+      (newVal) => {
+        leadsBySourceSeries.series[0].data = newVal;
+      },
+      { immediate: false, deep: true }
+    );
+
+    watch(
+      () => statusValueSeries.value,
+      (newVal) => {
+        valueByStateBar.series[0].data = newVal;
+      },
+      { immediate: false, deep: true }
+    );
 
     return {
       valueByStateBar,
