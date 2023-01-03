@@ -100,13 +100,21 @@ export default defineComponent({
       }, 0);
     };
 
-    const uploadFiles = () => {
-      fileList.value.forEach((file) => {
-        batchImportData({
-          fileType: "FarmerLimits",
-          file: file,
+    const uploadFiles = async () => {
+      try {
+        await fileList.value.forEach((file) => {
+          const filedata = new FormData();
+          filedata.append("file", file.originFileObj);
+
+          batchImportData({
+            fileType: "FarmerLimits",
+            file: filedata,
+          });
         });
-      });
+      } catch (err) {
+        console.error(err);
+        message.error(err.data.message);
+      }
     };
 
     const downloadTemplate = async () => {

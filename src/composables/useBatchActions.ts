@@ -26,6 +26,7 @@ export default function useBatchActions(): {
       await store.batchImport(payload);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 

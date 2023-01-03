@@ -161,15 +161,18 @@ export default defineComponent({
     // };
 
     const uploadFiles = async () => {
-      console.log(fileList.value);
+      try {
+        const filedata = new FormData();
+        filedata.append("file", fileList.value[0].originFileObj);
 
-      const filedata = new FormData();
-      filedata.append("file", fileList.value[0].originFileObj);
-
-      await batchImportData({
-        fileType: formState.value.fileType,
-        file: filedata,
-      });
+        await batchImportData({
+          fileType: formState.value.fileType,
+          file: filedata,
+        });
+      } catch (err) {
+        console.error(err);
+        message.error(err.data.message);
+      }
       // Promise.all(
       //   fileList.value.map((file) => getFile(file.originFileObj))
       // ).then(async (data) => {
