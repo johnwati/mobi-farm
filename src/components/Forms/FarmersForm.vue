@@ -30,6 +30,7 @@
         <a-col class="gutter-row" :span="12">
           <a-form-item label="Phone Number" name="phone_number">
             <a-input
+              :addon-before="isEditing ? '' : '+254'"
               v-model:value="formState.phone_number"
               style="width: 100%"
             />
@@ -208,9 +209,9 @@ export default defineComponent({
     });
 
     const submit = async () => {
-      loading.value = true;
       try {
         await farmersForm.value.validate();
+        loading.value = true;
         if (props.isEditing) {
           await updateFarmer({
             id: farmer.value.id,
@@ -220,12 +221,11 @@ export default defineComponent({
           await createFarmer(formState.value);
         }
         farmersForm.value.resetFields();
-      } catch (error) {
-        console.error(error);
-      } finally {
         loading.value = false;
         emit("close-drawer");
         emit("submitted");
+      } catch (error) {
+        console.error(error);
       }
     };
 
@@ -259,7 +259,6 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            console.log(farmer.value, "watching");
             formState.value = {
               first_name: farmer.value.fname,
               last_name: farmer.value.lname,
@@ -285,7 +284,6 @@ export default defineComponent({
               marital_status: farmer.value.marital_status,
               other_source_od_income: farmer.value.other_source_od_income,
             };
-            console.log(formState, "state");
           } else {
             formState.value = {
               first_name: "",

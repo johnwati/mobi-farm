@@ -215,7 +215,6 @@ export default defineComponent({
       await setFarmerLimit(limit);
       isEditing.value = true;
       formVisible.value = true;
-      console.log(limit, "editing");
     };
 
     const removeLimit = async (limit) => {

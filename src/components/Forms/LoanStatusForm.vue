@@ -124,8 +124,7 @@ export default defineComponent({
     onMounted(async () => {
       loading.value = true;
       try {
-        console.log(loan);
-        // await fetchClassrooms({ "school.id": schoolId.value });
+        // console.log(loan);
       } catch (error) {
         console.error(error);
       } finally {

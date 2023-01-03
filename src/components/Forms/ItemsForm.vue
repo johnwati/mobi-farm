@@ -187,8 +187,6 @@ export default defineComponent({
       loading.value = true;
       try {
         await fetchItemCategories();
-        // console.log(loan);
-        // await fetchClassrooms({ "school.id": schoolId.value });
       } catch (error) {
         console.error(error);
       } finally {
@@ -202,7 +200,6 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            console.log("chnnging");
             formState.value = {
               itemId: item.value.item_id,
               itemType: item.value.item_type,

@@ -43,12 +43,11 @@ export const useFarmerLimitsStore = defineStore({
 
     async registerFarmerLimits(payload) {
       try {
-        const response = await $http.Api({
+        await $http.Api({
           method: "POST",
           url: `/farmer-limits`,
           data: payload,
         });
-        console.log("added farmer limits", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -57,12 +56,11 @@ export const useFarmerLimitsStore = defineStore({
 
     async updateFarmerLimits(payload) {
       try {
-        const response = await $http.Api({
+        await $http.Api({
           method: "PUT",
           url: `/farmer-limits/${payload.id}`,
           data: payload.data,
         });
-        console.log("updated farmer limits", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -71,11 +69,10 @@ export const useFarmerLimitsStore = defineStore({
 
     async deleteFarmerLimits(farmerId: number) {
       try {
-        const response = await $http.Api({
+        await $http.Api({
           method: "DELETE",
           url: `/farmer-limits/${farmerId}`,
         });
-        console.log("deleted farmer limit", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

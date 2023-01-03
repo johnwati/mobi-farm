@@ -135,7 +135,6 @@ export default defineComponent({
     };
 
     const onProductSelect = (string: string, value: LoanProductOption) => {
-      console.log(value);
       formState.value = {
         ...formState.value,
         product_code: value.code,

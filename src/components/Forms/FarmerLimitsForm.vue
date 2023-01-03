@@ -174,7 +174,6 @@ export default defineComponent({
     };
 
     const onLoanProductSelect = (string: string, value: LoanProductOption) => {
-      console.log(value);
       formState.value = {
         ...formState.value,
         loan_product_name: value.label,
@@ -237,10 +236,8 @@ export default defineComponent({
     onMounted(async () => {
       loading.value = true;
       try {
-        // console.log(loan);
         await fetchLoanProducts();
         await fetchFarmers();
-        // await fetchClassrooms({ "school.id": schoolId.value });
       } catch (error) {
         console.error(error);
       } finally {
@@ -254,7 +251,6 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            console.log("chnnging");
             formState.value = {
               loan_product_code: farmerLimit.value.loan_product_code,
               loan_product_name: farmerLimit.value.loan_product_name,

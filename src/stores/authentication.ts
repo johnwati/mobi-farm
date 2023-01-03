@@ -40,13 +40,12 @@ export const useAuthenticationStore = defineStore({
 
     async signup(payload) {
       try {
-        const response = await $http.Authentication({
+        await $http.Authentication({
           method: "POST",
           url: "/auth/signup",
           data: payload,
         });
         //TODO --- handle saving token...
-        console.log("sign up", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -55,12 +54,10 @@ export const useAuthenticationStore = defineStore({
 
     async logOut() {
       try {
-        const response = await $http.Authentication({
+        await $http.Authentication({
           method: "POST",
           url: "/auth/logout",
-          // data: payload,
         });
-        console.log("log out", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

@@ -41,14 +41,6 @@ export default function useDashboard(): {
   });
 
   const statusCountSeries = computed(() => {
-    console.log(
-      Object.entries(store.getLoansByStatus)
-        .filter((i) => i[0].startsWith("count"))
-        .map((i) => ({
-          name: capitalize(i[0].replace("count_of_", "").replace("_", " ")),
-          y: i[1],
-        }))
-    );
     return Object.entries(store.getLoansByStatus)
       .filter((i) => i[0].startsWith("count"))
       .map((i) => ({
@@ -58,7 +50,6 @@ export default function useDashboard(): {
   });
 
   const statusValueSeries = computed(() => {
-    console.log(store.getLoansByStatus);
     return Object.entries(store.getLoansByStatus)
       .filter((i) => i[0].startsWith("value"))
       .map((i) => ({

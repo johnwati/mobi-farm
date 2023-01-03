@@ -69,12 +69,11 @@ export const useLoanProductStore = defineStore({
 
     async createLoanProduct(payload) {
       try {
-        const response = await $http.Api({
+        await $http.Api({
           method: "POST",
           url: `/loan-product`,
           data: payload,
         });
-        console.log("created loan product", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;
@@ -83,12 +82,11 @@ export const useLoanProductStore = defineStore({
 
     async updateLoanProduct(payload) {
       try {
-        const response = await $http.Api({
+        await $http.Api({
           method: "PUT",
           url: `/loan-product/${payload.code}`,
           data: payload.data,
         });
-        console.log("updated loan product", response.data);
       } catch (error) {
         const err = error as AxiosError;
         throw err.response;

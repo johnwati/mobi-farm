@@ -84,7 +84,7 @@ export default defineComponent({
     const handleChange = (info: UploadChangeParam) => {
       const status = info.file.status;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -94,17 +94,14 @@ export default defineComponent({
     };
 
     const uploadRequest = ({ file, onSuccess }) => {
-      console.log(file);
+      // console.log(file);
       setTimeout(() => {
         onSuccess("ok");
       }, 0);
     };
 
     const uploadFiles = () => {
-      console.log(fileList.value);
       fileList.value.forEach((file) => {
-        // const dataStream = fs.readFileSync(`Your Path to file/File Name`, null);
-        console.log(file);
         batchImportData({
           fileType: "FarmerLimits",
           file: file,

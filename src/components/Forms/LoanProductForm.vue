@@ -189,8 +189,6 @@ export default defineComponent({
       try {
         await fetchPaymentMethods();
         await loanProductsStore.fetchLoanFees();
-        console.log(loan);
-        // await fetchClassrooms({ "school.id": schoolId.value });
       } catch (error) {
         console.error(error);
       } finally {

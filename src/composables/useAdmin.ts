@@ -321,7 +321,6 @@ export default function useAdmin(): {
 
   async function setFarmerLimit(payload): Promise<void> {
     try {
-      console.log("setting");
       await store.setFarmerLimit(payload);
     } catch (error) {
       console.error(error);

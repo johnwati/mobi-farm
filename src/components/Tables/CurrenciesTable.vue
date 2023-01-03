@@ -96,9 +96,6 @@ export default defineComponent({
           filteredValue: filtered.name,
           onFilter: (value: string, record) =>
             `${record.name}`.toLowerCase().includes(value.toLowerCase()),
-          // onFilter: (value: string, record) => console.log(record),
-          // sorter: (a, b) => a.name.length - b.name.length,
-          // sortOrder: sorted.columnKey === "name" && sorted.order,
           slots: {
             filterIcon: "filterIcon",
             filterDropdown: "filterDropdown",
@@ -141,6 +138,7 @@ export default defineComponent({
         {
           title: "Action",
           key: "action",
+          // slots: { customRender: "approveRecord" },
           slots: { customRender: "editAction" },
         },
       ];

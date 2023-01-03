@@ -72,7 +72,6 @@ export default defineComponent({
 
     const loading = ref<boolean>(false);
     const onFinish = async (values: ILogin) => {
-      console.log("Success:", values);
       loading.value = true;
       try {
         const credentials = {
