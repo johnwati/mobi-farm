@@ -414,6 +414,7 @@
         v-else-if="formType === 'farmerLimits'"
         ref="farmersForm"
         :is-editing="false"
+        @submitted="fetchLimits"
         @close-drawer="closeDrawer"
       />
     </a-drawer>

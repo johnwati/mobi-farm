@@ -302,7 +302,7 @@ export default defineComponent({
       try {
         loading.value = true;
         await deleteFarmer(farmer.id);
-        console.log("deleting farmer");
+        await fetchFarmers();
       } catch (error) {
         console.error(error);
       } finally {
