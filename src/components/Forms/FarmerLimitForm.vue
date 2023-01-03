@@ -30,11 +30,23 @@
         />
       </a-form-item>
 
-      <a-form-item label="Min. Amount" name="min_amount">
+      <a-form-item
+        label="Min. Amount"
+        name="min_amount"
+        :help="
+          range.length > 0 ? 'Ksh ' + range[0] + ' to Ksh ' + range[1] : ''
+        "
+      >
         <a-input-number v-model:value="formState.min_amount" />
       </a-form-item>
 
-      <a-form-item label="Max. Amount" name="max_amount">
+      <a-form-item
+        label="Max. Amount"
+        name="max_amount"
+        :help="
+          range.length > 0 ? 'Ksh ' + range[0] + ' to Ksh ' + range[1] : ''
+        "
+      >
         <a-input-number v-model:value="formState.max_amount" />
       </a-form-item>
 
@@ -63,6 +75,8 @@ interface LoanProductOption {
   label: string;
   value: string;
   type: string;
+  min: number;
+  max: number;
 }
 
 export default defineComponent({
@@ -91,6 +105,8 @@ export default defineComponent({
 
     const loading = ref<boolean>(false);
 
+    const range = ref([]);
+
     const loanCategories = ref<string[]>(["LOAN", "INPUT"]);
 
     const loanProductOptions = computed((): LoanProductOption[] =>
@@ -98,6 +114,8 @@ export default defineComponent({
         label: i.name as string,
         value: i.code as string,
         type: i.loan_type as string,
+        min: i.min_amount as number,
+        max: i.max_amount as number,
       }))
     );
 
@@ -131,13 +149,13 @@ export default defineComponent({
     });
 
     const onLoanProductSelect = (string: string, value: LoanProductOption) => {
-      console.log(value, "lonaproduct select");
       formState.value = {
         ...formState.value,
         loan_product_name: value.label,
         loan_product_code: value.value,
         category: value.type,
       };
+      range.value = [value.min, value.max];
     };
 
     const submit = async () => {
@@ -191,7 +209,6 @@ export default defineComponent({
         loading.value = true;
         try {
           if (currentValue) {
-            console.log("chnnging");
             formState.value = {
               loan_product_code: farmerLimit.value.loan_product_code,
               loan_product_name: farmerLimit.value.loan_product_name,
@@ -251,6 +268,7 @@ export default defineComponent({
       loanProductOptions,
       farmerOptions,
       loanCategories,
+      range,
       onLoanProductSelect,
       filterOption,
       submit,
