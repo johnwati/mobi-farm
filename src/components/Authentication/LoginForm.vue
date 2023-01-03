@@ -40,8 +40,6 @@
         >
           Log in
         </a-button>
-        Or
-        <a href="">register now!</a>
       </a-form-item>
     </a-form>
   </a-spin>
