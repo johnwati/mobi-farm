@@ -85,7 +85,7 @@
 import { InboxOutlined } from "@ant-design/icons-vue";
 import type { UploadChangeParam } from "ant-design-vue";
 import { message } from "ant-design-vue";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 
 import { useBatchActions } from "@/composables";
 import type { SelectProps } from "ant-design-vue/lib/vc-select";
@@ -127,19 +127,15 @@ export default defineComponent({
         value: "Agrodealers",
       },
       {
-        label: "Products",
-        value: "Products",
-      },
-      {
-        label: "PriceBookItems",
-        value: "PriceBookItems",
+        label: "LoanRepayment",
+        value: "LoanRepayment",
       },
     ]);
 
     const handleChange = (info: UploadChangeParam) => {
       const status = info.file.status;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -155,26 +151,34 @@ export default defineComponent({
       }, 0);
     };
 
-    const getFile = async (file) => {
-      const reader = new FileReader();
-      return new Promise((resolve) => {
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
-    };
+    // const getFile = async (file) => {
+    //   const reader = new FileReader();
+    //   return new Promise((resolve) => {
+    //     reader.onload = () => resolve(reader.result);
+    //     // reader.readAsDataURL(file);
+    //     reader.readAsBinaryString(file);
+    //   });
+    // };
 
     const uploadFiles = async () => {
       console.log(fileList.value);
 
-      Promise.all(
-        fileList.value.map((file) => getFile(file.originFileObj))
-      ).then(async (data) => {
-        console.log(data, "item");
-        await batchImportData({
-          fileType: formState.value.fileType,
-          file: data,
-        });
+      const filedata = new FormData();
+      filedata.append("file", fileList.value[0].originFileObj);
+
+      await batchImportData({
+        fileType: formState.value.fileType,
+        file: filedata,
       });
+      // Promise.all(
+      //   fileList.value.map((file) => getFile(file.originFileObj))
+      // ).then(async (data) => {
+      //   console.log(data, "item");
+      //   await batchImportData({
+      //     fileType: formState.value.fileType,
+      //     file: data,
+      //   });
+      // });
     };
 
     const submit = async () => {
@@ -184,14 +188,6 @@ export default defineComponent({
         loading.value = false;
       });
     };
-
-    onMounted(async () => {
-      try {
-        // await fetchDeposits();
-      } catch (error) {
-        console.error(error);
-      }
-    });
 
     return {
       loading,

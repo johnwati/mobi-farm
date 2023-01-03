@@ -20,7 +20,6 @@ export const useBatchImportStore = defineStore({
           url: `/template?type=${templateType}`,
           responseType: "blob",
         });
-        console.log(response);
         const blob = new Blob([response.data], {
           type: response.headers["content-type"],
         });
@@ -42,7 +41,6 @@ export const useBatchImportStore = defineStore({
           url: `/report?reportName=${payload.reportName}&format=${payload.format}`,
           responseType: "blob",
         });
-        console.log(response);
         const blob = new Blob([response.data], {
           type: response.headers["content-type"],
         });
@@ -59,14 +57,24 @@ export const useBatchImportStore = defineStore({
 
     async batchImport(payload) {
       try {
-        const response = await $http.Api2({
+        const response = await $http.Api2(`/import/${payload.fileType}`, {
           method: "POST",
-          url: `/import/${payload.fileType}`,
-          data: {
-            file: payload.file[0],
+          data: payload.file,
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-          // url: `/import/${payload.fileType}?file=${payload.file}`,
         });
+        // const response = await $http.Api2({
+        //   method: "POST",
+        //   url: `/import/${payload.fileType}`,
+        //   data: {
+        //     file: payload.file[0],
+        //   },
+        //   headers: {
+
+        //   }
+        //   // url: `/import/${payload.fileType}?file=${payload.file}`,
+        // });
         return response.data;
       } catch (error) {
         const err = error as AxiosError;
