@@ -409,6 +409,14 @@
         </a-button>
       </span>
     </template>
+
+    <template #approveRecord="{ record }">
+      <span class="actions-cell">
+        <a-button type="link" @click="$emit('approve', record)">
+          Approve
+        </a-button>
+      </span>
+    </template>
   </a-table>
   <!-- <easy-data-table :headers="columns" :items="dataSource" /> -->
 </template>
@@ -482,6 +490,7 @@ export default defineComponent({
     "remove",
     "handle-search",
     "render-row-data",
+    "approve",
   ],
 
   setup(props, { emit }) {
